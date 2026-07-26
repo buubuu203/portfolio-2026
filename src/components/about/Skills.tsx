@@ -25,7 +25,7 @@ export function Skills() {
         <div className="max-w-2xl space-y-10">
           {groups.map((group) => (
             <div key={group.label}>
-              <p className="text-sm uppercase tracking-widest text-foreground/40">{group.label}</p>
+              <p className="text-sm uppercase tracking-widest text-foreground/50">{group.label}</p>
               <RevealGroup className="mt-4 flex flex-wrap gap-3">
                 {group.items.map((item) => (
                   <RevealItem key={item}>

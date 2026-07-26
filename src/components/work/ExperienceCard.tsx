@@ -52,8 +52,8 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
     <article className="-mx-3 border-t border-foreground/10 px-6 py-16 transition-all duration-300 ease-out first:border-t-0 first:pt-10 hover:-translate-y-0.5 hover:bg-foreground/[0.03] sm:-mx-4 sm:px-8 lg:-mx-6 lg:px-12">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[240px_1fr]">
         <Reveal>
-          <p className="text-sm text-foreground/50">{experience.period}</p>
-          <p className="mt-1 text-sm text-foreground/50">{experience.company}</p>
+          <p className="text-sm text-foreground/60">{experience.period}</p>
+          <p className="mt-1 text-sm text-foreground/60">{experience.company}</p>
           <p className="mt-4 text-sm font-medium text-foreground/70">{experience.role}</p>
         </Reveal>
 

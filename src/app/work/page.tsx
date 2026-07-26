@@ -11,7 +11,7 @@ export default function WorkPage() {
   return (
     <>
       <Section className="pt-16">
-        <p className="text-sm uppercase tracking-widest text-foreground/50">Work</p>
+        <p className="text-sm uppercase tracking-widest text-foreground/60">Work</p>
         <h1 className="mt-4 font-black tracking-tight text-6xl leading-none sm:text-8xl">
           Experience.
         </h1>

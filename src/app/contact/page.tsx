@@ -13,7 +13,7 @@ export default function ContactPage() {
     <Section className="pt-16">
       <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_1fr]">
         <div>
-          <p className="text-sm uppercase tracking-widest text-foreground/50">Contact</p>
+          <p className="text-sm uppercase tracking-widest text-foreground/60">Contact</p>
           <h1 className="mt-4 font-black tracking-tight text-6xl leading-none sm:text-7xl">
             Let&apos;s talk.
           </h1>

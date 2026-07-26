@@ -19,7 +19,7 @@ export function StatGrid({ metrics }: { metrics: Metric[] }) {
                 suffix={targetMetric.suffix ? ` ${targetMetric.suffix}` : ""}
               />
             </p>
-            <p className="mt-2 text-sm text-foreground/50">{targetMetric.label}</p>
+            <p className="mt-2 text-sm text-foreground/60">{targetMetric.label}</p>
             <div className="mt-6 max-w-sm">
               <ProgressBar
                 percent={targetMetric.targetPercent!}
@@ -45,7 +45,7 @@ export function StatGrid({ metrics }: { metrics: Metric[] }) {
                   suffix={metric.suffix ? ` ${metric.suffix}` : ""}
                 />
               </p>
-              <p className="mt-2 text-sm text-foreground/50">{metric.label}</p>
+              <p className="mt-2 text-sm text-foreground/60">{metric.label}</p>
             </RevealItem>
           ))}
         </RevealGroup>

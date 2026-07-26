@@ -19,7 +19,7 @@ export function BlogCard({ post }: { post: Post }) {
 
   const content = (
     <>
-      <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/50">
+      <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/60">
         <span>{formatDate(post.date)}</span>
         {post.readingTime !== "-" && (
           <>

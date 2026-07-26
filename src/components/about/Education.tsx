@@ -22,7 +22,7 @@ export function Education() {
                 <p className="text-lg font-medium">{education.degree}</p>
                 <p className="text-foreground/60">{education.school}</p>
               </div>
-              <p className="text-sm text-foreground/50">{education.period}</p>
+              <p className="text-sm text-foreground/60">{education.period}</p>
             </div>
           </Reveal>
 
@@ -36,7 +36,7 @@ export function Education() {
 
           <Reveal delay={0.2}>
             <div className="mt-10">
-              <p className="text-sm uppercase tracking-widest text-foreground/40">Publication</p>
+              <p className="text-sm uppercase tracking-widest text-foreground/50">Publication</p>
               <a
                 href={publication.url}
                 target="_blank"
@@ -69,7 +69,7 @@ export function Education() {
 
           <Reveal delay={0.3}>
             <div className="mt-10">
-              <p className="text-sm uppercase tracking-widest text-foreground/40">Honors & Awards</p>
+              <p className="text-sm uppercase tracking-widest text-foreground/50">Honors & Awards</p>
               <div className="mt-4 flex flex-col gap-5">
                 {honors.map((honor) =>
                   honor.url ? (
@@ -100,7 +100,7 @@ export function Education() {
                         </svg>
                       </p>
                       <p className="text-foreground/60">{honor.org}</p>
-                      <p className="text-sm text-foreground/50">
+                      <p className="text-sm text-foreground/60">
                         {honor.date}
                         {honor.detail ? ` · ${honor.detail}` : ""}
                       </p>
@@ -109,7 +109,7 @@ export function Education() {
                     <div key={honor.title}>
                       <p className="text-lg font-medium">{honor.title}</p>
                       <p className="text-foreground/60">{honor.org}</p>
-                      <p className="text-sm text-foreground/50">
+                      <p className="text-sm text-foreground/60">
                         {honor.date}
                         {honor.detail ? ` · ${honor.detail}` : ""}
                       </p>
