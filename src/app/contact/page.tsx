@@ -6,6 +6,18 @@ import { identity } from "@/content/profile";
 
 export const metadata: Metadata = {
   title: "Contact",
+  description:
+    "Get in touch with Chau Ngoc Buu Dang — open to product, BA, and technical APM roles across fintech, e-commerce, and platform businesses.",
+  alternates: {
+    canonical: "/contact",
+  },
+  openGraph: {
+    title: "Contact — Chau Ngoc Buu Dang",
+    description:
+      "Get in touch with Chau Ngoc Buu Dang — open to product, BA, and technical APM roles across fintech, e-commerce, and platform businesses.",
+    url: "/contact",
+    type: "website",
+  },
 };
 
 export default function ContactPage() {

@@ -1,12 +1,11 @@
+export const siteUrl = "https://dangchau.dev";
+
 export const identity = {
   name: "Chau Ngoc Buu Dang",
   location: "Ho Chi Minh City, Vietnam",
   email: "work.dangchau2003@gmail.com",
   phone: "(+84) 917 192 680",
   linkedin: "https://linkedin.com/in/dangchau2003",
-  currentRole: "Associate Technical Product Manager, Cake by VPBank (CTicket Platform)",
-  oneLiner:
-    "I help companies ship the right product on time — without wasting resources on unclear requirements.",
   heroEyebrow: "Associate Technical Product Manager",
   heroHeadline: "Associate Product Manager",
   heroSubhead:
@@ -15,11 +14,12 @@ export const identity = {
 
 export const narrative = [
   "I joined Cake by VPBank as a PO Intern on the KYC & Digital Onboarding team, translating State Bank of Vietnam regulatory constraints into specs that Compliance, Legal, Engineering, and Design could all build against.",
-  "That work led to a promotion to Associate Technical Product Manager. I now sole-own the CTicket Platform end-to-end - running product for a 7-engineer Agile squad with no BA layer to lean on, from specs and Figma mockups to GA4 event tracking and roadmap calls during live, high-stakes on-sales.",
+  "That work led to a promotion to Associate Technical Product Manager, where my scope grew to owning the CTicket Platform's entire product surface - specs, Figma mockups, GA4 event tracking, and roadmap trade-offs made in real time during high-stakes on-sales.",
 ];
 
 export const education = {
   school: "University of Information Technology - VNU-HCM",
+  studentId: "21521918",
   degree: "BSc in E-Commerce",
   period: "2021-2025",
   gpa: "8.83/10",

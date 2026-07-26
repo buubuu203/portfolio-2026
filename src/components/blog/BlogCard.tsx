@@ -17,7 +17,7 @@ export function BlogCard({ post }: { post: Post }) {
   const interactiveClasses =
     "transition-transform duration-300 ease-out hover:scale-[1.008] hover:bg-foreground/[0.02]";
 
-  const content = (
+  const content = post.published ? (
     <>
       <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/60">
         <span>{formatDate(post.date)}</span>
@@ -27,7 +27,6 @@ export function BlogCard({ post }: { post: Post }) {
             <span>{post.readingTime}</span>
           </>
         )}
-        {!post.published && <Badge className="text-xs">Coming soon</Badge>}
       </div>
       <h2 className="text-2xl font-black tracking-tight sm:text-3xl">{post.title}</h2>
       <p className="max-w-2xl text-foreground/60">{post.excerpt}</p>
@@ -41,6 +40,8 @@ export function BlogCard({ post }: { post: Post }) {
         </div>
       )}
     </>
+  ) : (
+    <Badge className="w-fit text-xs">Coming soon</Badge>
   );
 
   return (

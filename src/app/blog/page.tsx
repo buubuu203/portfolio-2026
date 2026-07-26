@@ -1,26 +1,34 @@
 import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
-import { BlogCard } from "@/components/blog/BlogCard";
-import { posts } from "@/content/posts";
 
 export const metadata: Metadata = {
   title: "Blog",
+  description: "Blog coming soon, from Chau Ngoc Buu Dang.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "Blog — Chau Ngoc Buu Dang",
+    description: "Blog coming soon, from Chau Ngoc Buu Dang.",
+    url: "/blog",
+    type: "website",
+  },
 };
 
 export default function BlogPage() {
   return (
-    <Section className="pt-16">
-      <p className="text-sm uppercase tracking-widest text-foreground/60">Blog</p>
-      <h1 className="mt-4 font-black tracking-tight text-6xl leading-none sm:text-8xl">Writing.</h1>
-      <p className="mt-8 max-w-xl text-lg text-foreground/60 sm:text-xl">
-        Notes on product management, fintech, and shipping platforms end-to-end.
-      </p>
-
-      <ul className="mt-12">
-        {posts.map((post) => (
-          <BlogCard key={post.slug} post={post} />
-        ))}
-      </ul>
+    <Section
+      className="min-h-[60vh] pt-16"
+      containerClassName="flex flex-col items-center justify-center gap-8 text-center"
+    >
+      <h1 className="font-black tracking-tight text-6xl leading-none sm:text-8xl">
+        Coming soon.
+      </h1>
+      <div className="flex items-center justify-center gap-3" aria-hidden>
+        <span className="h-3 w-3 animate-bounce rounded-full bg-foreground/60 [animation-delay:-0.3s]" />
+        <span className="h-3 w-3 animate-bounce rounded-full bg-foreground/60 [animation-delay:-0.15s]" />
+        <span className="h-3 w-3 animate-bounce rounded-full bg-foreground/60" />
+      </div>
     </Section>
   );
 }

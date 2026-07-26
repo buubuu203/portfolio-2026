@@ -5,6 +5,18 @@ import { experience } from "@/content/profile";
 
 export const metadata: Metadata = {
   title: "Work",
+  description:
+    "Product experience across fintech and platform businesses: Cake by VPBank's CTicket Platform, KYC & Digital Onboarding, and Elite Fitness FTISU.",
+  alternates: {
+    canonical: "/work",
+  },
+  openGraph: {
+    title: "Work — Chau Ngoc Buu Dang",
+    description:
+      "Product experience across fintech and platform businesses: Cake by VPBank's CTicket Platform, KYC & Digital Onboarding, and Elite Fitness FTISU.",
+    url: "/work",
+    type: "website",
+  },
 };
 
 export default function WorkPage() {

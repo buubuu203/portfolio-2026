@@ -1,9 +1,17 @@
-import Image from "next/image";
+import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import { identity } from "@/content/profile";
+import { Highlights } from "@/components/about/Highlights";
+import { ProfilePhoto } from "@/components/about/ProfilePhoto";
 import { Narrative } from "@/components/about/Narrative";
 import { Education } from "@/components/about/Education";
 import { Skills } from "@/components/about/Skills";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function AboutPage() {
   return (
@@ -27,20 +35,11 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="relative mx-auto aspect-square w-full max-w-[560px] overflow-hidden rounded-[320px] lg:mx-0">
-            <Image
-              src="/images/profile.png"
-              alt={identity.name}
-              fill
-              priority
-              quality={90}
-              sizes="(min-width: 1024px) 640px, 560px"
-              className="object-contain"
-            />
-          </div>
+          <ProfilePhoto src="/images/profile.png" alt={identity.name} />
         </div>
       </Section>
 
+      <Highlights />
       <Narrative />
       <Education />
       <Skills />
