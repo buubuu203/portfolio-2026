@@ -28,8 +28,8 @@ export default function WorkPage() {
           Experience.
         </h1>
         <p className="mt-8 max-w-xl text-lg text-foreground/60 sm:text-xl">
-          Three roles, one throughline: own the product, ship fast, and move the numbers that
-          mattered.
+          Two roles and a self-directed university project, one throughline: own the product,
+          ship fast, and move the numbers that mattered.
         </p>
       </Section>
 

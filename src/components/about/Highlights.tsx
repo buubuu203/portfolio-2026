@@ -3,6 +3,7 @@ import { Section } from "@/components/ui/Section";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { experience, identity } from "@/content/profile";
+import { lowercaseFirstChar, parseRichText, renderRichNodes } from "@/lib/richText";
 
 export function Highlights() {
   const current = experience[0];
@@ -22,8 +23,8 @@ export function Highlights() {
         <div className="max-w-2xl">
           <Reveal>
             <p className="text-lg text-foreground/70">
-              As {identity.heroEyebrow} at {current.company}, I&apos;m {current.summary.charAt(0).toLowerCase()}
-              {current.summary.slice(1)}
+              As {identity.heroEyebrow} at {current.company}, I&apos;m{" "}
+              {renderRichNodes(lowercaseFirstChar(parseRichText(current.summary)))}
             </p>
           </Reveal>
 

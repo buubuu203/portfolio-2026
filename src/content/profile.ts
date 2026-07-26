@@ -80,6 +80,10 @@ export type Metric = {
 export type Experience = {
   slug: string;
   company: string;
+  /** Single-letter initial chip shown before the company name. Omit for non-employer entries. */
+  mark?: string;
+  /** Logo image shown before the company name instead of `mark`. */
+  markImage?: { src: string; width: number; height: number; alt: string };
   title: string;
   period: string;
   role: string;
@@ -92,15 +96,19 @@ export const experience: Experience[] = [
   {
     slug: "cticket-platform",
     company: "Cake by VPBank",
+    mark: "C",
     title: "CTicket Platform",
     period: "Mar 2025 - Present",
     role: "Associate Technical Product Manager (promoted from PO Intern)",
     summary:
-      "Sole Product Owner of a 7-engineer Agile squad with no BA layer, shipping a multi-surface ticketing product suite.",
+      "**Sole Product Owner** of a 7-engineer Agile squad with no BA layer - spec directly against engineering, data models, and compliance, and own every roadmap trade-off end to end.",
     highlights: [
-      "Authored specs, Figma mockups, workflows, and business rules end-to-end across four surfaces: [consumer ticketing web](https://cticket.vn/), an SDK embedded in Cake's banking super-app, a [mobile check-in app](https://play.google.com/store/apps/details?id=vn.cake.ticket&hl=vi&pli=1) (App Store + Play Store), and a role-based admin portal.",
-      "Built GA4/GTM event tracking and BI-partnered KPI dashboards from scratch, covering revenue, funnel conversion, and partner performance.",
-      "Re-prioritized the roadmap in real time during high-stakes on-sales, including The Spark K-Star (sold out in 1 week), T1 Vietnam Fanmeeting, and the VPBank International Marathon, shipping 30+ features with zero critical post-release incidents.",
+      "Re-prioritized the roadmap in real time during high-stakes on-sales, including The Spark K-Star (sold out in 1 week), T1 Vietnam Fanmeeting, and the VPBank International Marathon, shipping 30+ features with **zero critical post-release incidents**.",
+      "Owned the **CTicket x OPES ticket-cancellation insurance partnership** end-to-end - PRD, eligibility rules, and the OPES API integration contract - aligning Compliance, Marketing, and Engineering to ship it.",
+      "Designed and shipped **Group Buy** (leader/member registration, per-member sub-order ticket assignment) as a new purchase path for event-organizer partnerships, launching first for the VPBank International Marathon.",
+      "Integrated dual **payment gateways** into CTicket checkout - Cake's own rails for Visa/Mastercard, global QR, and VAN, plus Xendit for full card-network coverage - powering individual, group, and insurance purchase flows.",
+      "Authored specs, Figma mockups, workflows, and business rules end-to-end across four surfaces: [consumer ticketing web](https://cticket.vn/), a partner-facing SDK embedded in Cake's banking super-app whose **merchant integration contract** I owned, a [mobile check-in app](https://play.google.com/store/apps/details?id=vn.cake.ticket&hl=vi&pli=1) (App Store + Play Store), and a role-based admin portal.",
+      "Built **GA4/GTM event tracking** and BI-partnered KPI dashboards from scratch, covering revenue, funnel conversion, and partner performance.",
     ],
     metrics: [
       { label: "GMV", value: 238, suffix: "bn VND", targetPercent: 159 },
@@ -114,14 +122,15 @@ export const experience: Experience[] = [
   {
     slug: "kyc-digital-onboarding",
     company: "Cake by VPBank",
+    mark: "C",
     title: "KYC & Digital Onboarding",
     period: "Jun 2024 - Feb 2025",
     role: "Technical Product Owner / PO Intern",
     summary:
       "Translated State Bank of Vietnam regulatory constraints into shippable specs for NFC-based identity verification.",
     highlights: [
-      "Partnered with Compliance, Legal, Engineering, and Design to translate State Bank of Vietnam regulatory constraints into specs for [NFC-based identity verification](https://cake.vn/guide/huong-dan-ho-tro-cap-nhat-sinh-trac-hoc-tren-ung-dung-cake-bank).",
-      "Authored 100+ user stories across 8 sprint releases, balancing compliance requirements against onboarding speed.",
+      "Partnered with Compliance, Legal, Engineering, and Design to translate **State Bank of Vietnam regulatory constraints** into specs for [NFC-based identity verification](https://cake.vn/guide/huong-dan-ho-tro-cap-nhat-sinh-trac-hoc-tren-ung-dung-cake-bank).",
+      "Authored **100+ user stories** across 8 sprint releases, balancing compliance requirements against onboarding speed.",
       "Validated outcomes via UAT and post-release funnel analysis.",
     ],
     metrics: [
@@ -131,15 +140,18 @@ export const experience: Experience[] = [
   },
   {
     slug: "elite-fitness-ftisu",
-    company: "Elite Fitness FTISU",
+    company: "University Project - self-directed",
+    markImage: { src: "/images/uit-logo.png", width: 54, height: 42, alt: "UIT logo" },
     title: "Elite Fitness FTISU (iOS App)",
     period: "2023 - 2025",
-    role: "Product Owner & UI/UX Designer",
-    summary: "Shipped a live App Store app end-to-end and cut booking drop-off through usability testing.",
+    role: "Solo Product Owner & UI/UX Designer",
+    summary:
+      "Self-directed university project: shipped a live App Store app end-to-end and cut booking drop-off through usability testing.",
     highlights: [
-      "Owned product and UI/UX design end-to-end for a live App Store app with no prior dedicated owner driving iteration.",
+      "Initiated and owned product and UI/UX design end-to-end for a **live App Store app** as a university project, with no prior dedicated owner driving iteration.",
       "Ran iterative usability testing to identify onboarding and class-booking friction.",
-      "Shipped fixes that cut drop-off at both onboarding and booking steps.",
+      "Shipped fixes that **cut drop-off** at both onboarding and booking steps.",
+      `Same era: [co-authored a published AI-personalisation paper](${publication.url}) (Springer LNCS 2024) and [won the Advanced Information Systems Contest](${honors[0].url}) (AISC 2023).`,
     ],
     metrics: [],
   },
