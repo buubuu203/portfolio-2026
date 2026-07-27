@@ -18,6 +18,12 @@ export const metadata: Metadata = {
     url: "/contact",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact — Chau Ngoc Buu Dang",
+    description:
+      "Get in touch with Chau Ngoc Buu Dang — open to product, BA, and technical APM roles across fintech, e-commerce, and platform businesses.",
+  },
 };
 
 export default function ContactPage() {

@@ -15,6 +15,11 @@ export const metadata: Metadata = {
     url: "/fit-check",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fit Check — Chau Ngoc Buu Dang",
+    description: `Paste a job description and get an AI-generated read on how it lines up with ${identity.name}'s experience.`,
+  },
 };
 
 export default function FitCheckPage() {

@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     url: "/blog",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog — Chau Ngoc Buu Dang",
+    description: "Blog coming soon, from Chau Ngoc Buu Dang.",
+  },
 };
 
 export default function BlogPage() {

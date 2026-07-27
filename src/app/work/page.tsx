@@ -17,6 +17,12 @@ export const metadata: Metadata = {
     url: "/work",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Work — Chau Ngoc Buu Dang",
+    description:
+      "Product experience across fintech and platform businesses: Cake by VPBank's CTicket Platform, KYC & Digital Onboarding, and Elite Fitness FTISU.",
+  },
 };
 
 export default function WorkPage() {
