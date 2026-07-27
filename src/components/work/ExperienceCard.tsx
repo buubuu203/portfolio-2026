@@ -3,7 +3,8 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
-import { Reveal } from "@/components/ui/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { Badge } from "@/components/ui/Badge";
 import { StatGrid } from "@/components/work/StatGrid";
 import type { Experience } from "@/content/profile";
 import { renderRichText } from "@/lib/richText";
@@ -88,6 +89,44 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
             <h3 className="font-black tracking-tight text-3xl sm:text-4xl">{experience.title}</h3>
             <p className="mt-4 text-lg text-foreground/70">{renderRichText(experience.summary)}</p>
           </Reveal>
+
+          {experience.partners && experience.partners.length > 0 && (
+            <Reveal delay={0.05}>
+              <p className="mt-6 text-sm uppercase tracking-widest text-foreground/50">
+                Partner &amp; platform integrations
+              </p>
+              <RevealGroup className="mt-3 flex flex-wrap items-center gap-4">
+                {experience.partners.map((partner) => {
+                  const logoImg = partner.logo && (
+                    <Image
+                      src={partner.logo.src}
+                      alt={partner.logo.alt}
+                      width={partner.logo.width}
+                      height={partner.logo.height}
+                      className="h-5 w-auto object-contain"
+                    />
+                  );
+
+                  if (!partner.logo) {
+                    return (
+                      <RevealItem key={partner.name}>
+                        <Badge className="border-accent/30 text-foreground">{partner.name}</Badge>
+                      </RevealItem>
+                    );
+                  }
+
+                  return (
+                    <RevealItem key={partner.name}>
+                      <span className="inline-flex items-center gap-2 transition-transform duration-200 ease-out hover:scale-110">
+                        {logoImg}
+                        {partner.showName && partner.name}
+                      </span>
+                    </RevealItem>
+                  );
+                })}
+              </RevealGroup>
+            </Reveal>
+          )}
 
           <Reveal delay={0.1}>
             <ul className="mt-8 space-y-2">

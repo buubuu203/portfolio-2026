@@ -1,4 +1,6 @@
-export const siteUrl = "https://dangchau.dev";
+// Update this once a custom domain is live — every canonical URL, sitemap
+// entry, and Open Graph image resolves against it.
+export const siteUrl = "https://dangchau-portfolio-2026.vercel.app";
 
 export const identity = {
   name: "Chau Ngoc Buu Dang",
@@ -77,6 +79,13 @@ export type Metric = {
   targetPercent?: number;
 };
 
+export type Partner = {
+  name: string;
+  logo?: { src: string; width: number; height: number; alt: string };
+  /** Show the name next to the logo — for icon-only marks that don't spell the name themselves. */
+  showName?: boolean;
+};
+
 export type Experience = {
   slug: string;
   company: string;
@@ -88,6 +97,8 @@ export type Experience = {
   period: string;
   role: string;
   summary: string;
+  /** External companies/platforms integrated with — rendered as a scannable badge row for PO/integration-scope searches. */
+  partners?: Partner[];
   highlights: string[];
   metrics: Metric[];
 };
@@ -102,9 +113,24 @@ export const experience: Experience[] = [
     role: "Associate Technical Product Manager (promoted from PO Intern)",
     summary:
       "**Sole Product Owner** of a 7-engineer Agile squad with no BA layer - spec directly against engineering, data models, and compliance, and own every roadmap trade-off end to end.",
+    partners: [
+      { name: "Cake", logo: { src: "/images/cake-logo.png", width: 2291, height: 610, alt: "Cake by VPBank" } },
+      { name: "VPBank", logo: { src: "/images/vpbank-logo.svg", width: 706, height: 160, alt: "VPBank" } },
+      {
+        name: "OPES",
+        logo: { src: "/images/opes-logo.png", width: 248, height: 242, alt: "OPES" },
+        showName: true,
+      },
+      {
+        name: "VinWonders (8Wonder)",
+        logo: { src: "/images/vinwonders-logo.png", width: 122, height: 32, alt: "VinWonders" },
+      },
+      { name: "Xendit", logo: { src: "/images/xendit-logo.svg", width: 121, height: 37, alt: "Xendit" } },
+    ],
     highlights: [
       "Re-prioritized the roadmap in real time during high-stakes on-sales, including The Spark K-Star (sold out in 1 week), T1 Vietnam Fanmeeting, and the VPBank International Marathon, shipping 30+ features with **zero critical post-release incidents**.",
       "Owned the **CTicket x OPES ticket-cancellation insurance partnership** end-to-end - PRD, eligibility rules, and the OPES API integration contract - aligning Compliance, Marketing, and Engineering to ship it.",
+      "Drove the **CTicket x 8Wonder (VinWonders) real-time inventory integration** - CTicket's first external-provider integration - authoring the PRD and API contract (token, lock-slot, rate-service, and booking-confirmation flows against VinWonders' OTA API) so events sell from a single shared stock pool across channels with no overselling.",
       "Designed and shipped **Group Buy** (leader/member registration, per-member sub-order ticket assignment) as a new purchase path for event-organizer partnerships, launching first for the VPBank International Marathon.",
       "Integrated dual **payment gateways** into CTicket checkout - Cake's own rails for Visa/Mastercard, global QR, and VAN, plus Xendit for full card-network coverage - powering individual, group, and insurance purchase flows.",
       "Authored specs, Figma mockups, workflows, and business rules end-to-end across four surfaces: [consumer ticketing web](https://cticket.vn/), a partner-facing SDK embedded in Cake's banking super-app whose **merchant integration contract** I owned, a [mobile check-in app](https://play.google.com/store/apps/details?id=vn.cake.ticket&hl=vi&pli=1) (App Store + Play Store), and a role-based admin portal.",
