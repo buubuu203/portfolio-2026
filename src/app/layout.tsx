@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -138,6 +139,7 @@ export default function RootLayout({
           <PageTransition>{children}</PageTransition>
           <Footer />
         </Preloader>
+        <Analytics />
       </body>
     </html>
   );
