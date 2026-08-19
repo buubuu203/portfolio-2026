@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
   try {
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
-      model: "gemini-flash-latest",
+      model: "gemini-3.7-flash",
       contents: `Job description to evaluate:\n\n${trimmed}`,
       config: {
         systemInstruction: buildFitCheckSystemInstruction(),
