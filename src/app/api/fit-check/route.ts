@@ -97,6 +97,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (err) {
     console.error("Fit check generation failed:", err);
-    return NextResponse.json({ error: "Couldn't analyze that right now. Please try again." }, { status: 502 });
+    return NextResponse.json(
+      { error: "Couldn't analyze that right now. Please try again.", debug: err instanceof Error ? err.message : String(err) },
+      { status: 502 }
+    );
   }
 }
