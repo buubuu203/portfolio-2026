@@ -30,7 +30,7 @@ export function Reveal({ children, className, delay = 0, y = 16, as = "div" }: R
       className={cn(className)}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-80px 0px" }}
       variants={variants}
     >
       {children}
@@ -63,7 +63,7 @@ export function RevealGroup({
       className={cn(className)}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-80px 0px" }}
       variants={container}
     >
       {children}

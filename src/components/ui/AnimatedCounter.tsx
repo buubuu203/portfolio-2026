@@ -17,7 +17,7 @@ export function AnimatedCounter({
   className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "-80px 0px" });
   const shouldReduceMotion = useReducedMotion();
 
   const motionValue = useMotionValue(0);
