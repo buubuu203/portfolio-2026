@@ -70,33 +70,58 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  try {
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: `Job description to evaluate:\n\n${trimmed}`,
-      config: {
-        systemInstruction: buildFitCheckSystemInstruction(),
-        responseMimeType: "application/json",
-        responseSchema: fitCheckResponseSchema,
-        maxOutputTokens: 4096,
-      },
-    });
+  const ai = new GoogleGenAI({ apiKey });
+  const MAX_ATTEMPTS = 3;
+  let lastError: unknown;
 
-    const finishReason = response.candidates?.[0]?.finishReason;
-    if (finishReason === "MAX_TOKENS") {
-      throw new Error("Model response was truncated (hit maxOutputTokens).");
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: `Job description to evaluate:\n\n${trimmed}`,
+        config: {
+          systemInstruction: buildFitCheckSystemInstruction(),
+          responseMimeType: "application/json",
+          responseSchema: fitCheckResponseSchema,
+          maxOutputTokens: 4096,
+        },
+      });
+
+      const finishReason = response.candidates?.[0]?.finishReason;
+      if (finishReason === "MAX_TOKENS") {
+        throw new Error("Model response was truncated (hit maxOutputTokens).");
+      }
+
+      const text = response.text;
+      if (!text) {
+        throw new Error("Empty response from model.");
+      }
+
+      const result = JSON.parse(text) as FitCheckResult;
+      return NextResponse.json(result);
+    } catch (err) {
+      lastError = err;
+      const isOverloaded =
+        err instanceof Error && /"code":503|UNAVAILABLE|high demand/i.test(err.message);
+
+      if (isOverloaded && attempt < MAX_ATTEMPTS) {
+        console.warn(`Fit check attempt ${attempt} hit 503, retrying...`);
+        await new Promise((resolve) => setTimeout(resolve, attempt * 800));
+        continue;
+      }
+      break;
     }
-
-    const text = response.text;
-    if (!text) {
-      throw new Error("Empty response from model.");
-    }
-
-    const result = JSON.parse(text) as FitCheckResult;
-    return NextResponse.json(result);
-  } catch (err) {
-    console.error("Fit check generation failed:", err);
-    return NextResponse.json({ error: "Couldn't analyze that right now. Please try again." }, { status: 502 });
   }
+
+  console.error("Fit check generation failed:", lastError);
+  const isOverloaded =
+    lastError instanceof Error && /"code":503|UNAVAILABLE|high demand/i.test(lastError.message);
+  return NextResponse.json(
+    {
+      error: isOverloaded
+        ? "The AI model is experiencing high demand right now. Please try again in a minute."
+        : "Couldn't analyze that right now. Please try again.",
+    },
+    { status: 502 }
+  );
 }
