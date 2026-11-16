@@ -12,9 +12,14 @@ type VideoData = {
 };
 
 export async function Hobbies() {
-  const videos = await prisma.hobbyVideo.findMany({
-    orderBy: { sortOrder: "asc" },
-  });
+  let videos: VideoData[] = [];
+  try {
+    videos = await prisma.hobbyVideo.findMany({
+      orderBy: { sortOrder: "asc" },
+    });
+  } catch {
+    // Table may not exist yet in production
+  }
 
   const pianoCards: VideoData[] = videos.filter((v) => v.category === "piano");
   const printCards: VideoData[] = videos.filter((v) => v.category === "3d-printing");
