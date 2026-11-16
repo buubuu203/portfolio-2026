@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Section } from "@/components/ui/Section";
 import { ContactForm } from "@/components/contact/ContactForm";
-import { Icon } from "@/components/ui/Icon";
 import { identity } from "@/content/profile";
 
 export const metadata: Metadata = {
@@ -28,42 +27,84 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <Section className="pt-16">
-      <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_1fr]">
-        <div>
-          <p className="text-sm uppercase tracking-widest text-foreground/60">Contact</p>
-          <h1 className="mt-4 font-black tracking-tight text-6xl leading-none sm:text-7xl">
-            Let&apos;s talk.
-          </h1>
-          <p className="mt-8 max-w-sm text-lg text-foreground/60">
-            Open to product, BA, and technical APM roles. Send a message, or reach me directly.
-          </p>
+    <Section id="contact">
+      {/* ── Header: full-width above columns ── */}
+      <div className="flex items-center gap-2.5">
+        <span
+          className="flex h-9 w-9 flex-none items-center justify-center"
+          style={{ borderRadius: 11, background: "linear-gradient(145deg,#7a7a82,#2c2c30)" }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+        </span>
+        <span className="text-[14px] font-semibold uppercase tracking-[.06em] text-[var(--text-secondary)]">Contact</span>
+      </div>
+      <h1
+        className="mt-[14px] font-bold"
+        style={{ fontSize: "clamp(44px, 10.5vw, 80px)", letterSpacing: "-0.035em", lineHeight: 1.03 }}
+      >
+        Let&apos;s talk.
+      </h1>
+      <p className="mt-[14px] max-w-[760px] text-[var(--text-secondary)]" style={{ fontSize: "clamp(16px, 2.5vw, 24px)", lineHeight: 1.4 }}>
+        Open to product, BA and technical APM roles. Send a message, or reach me directly.
+      </p>
 
-          <div className="mt-10 flex flex-col gap-3 text-foreground/70">
-            <a href={`mailto:${identity.email}`} className="flex w-fit items-center gap-2.5 hover:text-accent">
-              <Icon name="Email" className="h-4 w-4" />
-              {identity.email}
+      {/* ── Two-column row ── */}
+      <div className="mt-9 flex flex-wrap gap-6" style={{ alignItems: "flex-start" }}>
+        {/* LEFT: links card + location */}
+        <div className="flex w-full flex-col gap-5 lg:w-auto lg:flex-1">
+          <div className="glass overflow-hidden" style={{ borderRadius: "var(--radius-inner)" }}>
+            <a href={`mailto:${identity.email}`} className="settings-row spring-hover text-[var(--text-primary)]">
+              <span className="squircle squircle-sm">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M4 7l8 6 8-6" /></svg>
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-[17px] font-semibold">Email</span>
+                <span className="block text-[13px] text-[var(--text-secondary)]" style={{ overflowWrap: "anywhere" }}>{identity.email}</span>
+              </span>
+              <span className="text-[20px] text-[var(--text-tertiary)]" aria-hidden>›</span>
             </a>
-            <a
-              href={`tel:${identity.phone.replace(/[^+\d]/g, "")}`}
-              className="flex w-fit items-center gap-2.5 hover:text-accent"
-            >
-              <Icon name="Phone" className="h-4 w-4" />
-              {identity.phone}
+            <a href={`tel:${identity.phone.replace(/[^+\d]/g, "")}`} className="settings-row spring-hover text-[var(--text-primary)]">
+              <span className="squircle squircle-sm" style={{ background: "linear-gradient(145deg,#5c5c63,#1d1d1f)" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-[17px] font-semibold">Phone</span>
+                <span className="block text-[13px] text-[var(--text-secondary)]">{identity.phone}</span>
+              </span>
+              <span className="text-[20px] text-[var(--text-tertiary)]" aria-hidden>›</span>
             </a>
-            <a
-              href={identity.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="flex w-fit items-center gap-2.5 hover:text-accent"
-            >
-              <Icon name="LinkedIn" className="h-4 w-4" />
-              LinkedIn
+            <a href={identity.linkedin} target="_blank" rel="noreferrer" className="settings-row spring-hover text-[var(--text-primary)]">
+              <span className="squircle squircle-sm">
+                <span className="text-[13px] font-bold text-white">in</span>
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-[17px] font-semibold">LinkedIn</span>
+                <span className="block text-[13px] text-[var(--text-secondary)]">linkedin.com/in/dangchau2003</span>
+              </span>
+              <span className="text-[20px] text-[var(--text-tertiary)]" aria-hidden>›</span>
+            </a>
+            <a href="/resume.pdf" download="ChauNgocBuuDang_APM_General.pdf" className="settings-row spring-hover text-[var(--text-primary)]">
+              <span className="squircle squircle-sm" style={{ background: "linear-gradient(145deg,#5c5c63,#1d1d1f)" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" /></svg>
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block text-[17px] font-semibold">Download CV</span>
+                <span className="block text-[13px] text-[var(--text-secondary)]">PDF · Associate Product Manager</span>
+              </span>
+              <span className="text-[20px] text-[var(--text-tertiary)]" aria-hidden>›</span>
             </a>
           </div>
+          <p className="text-[15px] text-[var(--text-secondary)]" style={{ margin: 0 }}>
+            Based in Ho Chi Minh City, Vietnam.
+          </p>
         </div>
 
-        <ContactForm />
+        {/* RIGHT: form card */}
+        <div className="glass w-full lg:flex-1" style={{ borderRadius: 36, padding: 32, flex: "1 1 440px" }}>
+          <ContactForm />
+        </div>
       </div>
     </Section>
   );

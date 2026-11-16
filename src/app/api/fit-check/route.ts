@@ -13,9 +13,21 @@ const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 
 // Best-effort only — resets on cold start since serverless instances aren't persistent.
 const requestLog = new Map<string, number[]>();
+const MAX_TRACKED_IPS = 1000;
+let lastCleanup = Date.now();
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+
+  if (now - lastCleanup > RATE_LIMIT_WINDOW_MS || requestLog.size > MAX_TRACKED_IPS) {
+    for (const [key, ts] of requestLog) {
+      const fresh = ts.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+      if (fresh.length === 0) requestLog.delete(key);
+      else requestLog.set(key, fresh);
+    }
+    lastCleanup = now;
+  }
+
   const timestamps = (requestLog.get(ip) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
 
   if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
@@ -71,45 +83,51 @@ export async function POST(request: NextRequest) {
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const MAX_ATTEMPTS = 3;
+  const MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite"] as const;
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: `Job description to evaluate:\n\n${trimmed}`,
-        config: {
-          systemInstruction: buildFitCheckSystemInstruction(),
-          responseMimeType: "application/json",
-          responseSchema: fitCheckResponseSchema,
-          maxOutputTokens: 4096,
-        },
-      });
+  for (const model of MODELS) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: `Job description to evaluate:\n\n${trimmed}`,
+          config: {
+            systemInstruction: buildFitCheckSystemInstruction(),
+            responseMimeType: "application/json",
+            responseSchema: fitCheckResponseSchema,
+            maxOutputTokens: 4096,
+            thinkingConfig: { thinkingBudget: 0 },
+          },
+        });
 
-      const finishReason = response.candidates?.[0]?.finishReason;
-      if (finishReason === "MAX_TOKENS") {
-        throw new Error("Model response was truncated (hit maxOutputTokens).");
+        const finishReason = response.candidates?.[0]?.finishReason;
+        if (finishReason === "MAX_TOKENS") {
+          throw new Error("Model response was truncated (hit maxOutputTokens).");
+        }
+
+        const text = response.text;
+        if (!text) {
+          throw new Error("Empty response from model.");
+        }
+
+        const result = JSON.parse(text) as FitCheckResult;
+        return NextResponse.json(result);
+      } catch (err) {
+        lastError = err;
+        const isOverloaded =
+          err instanceof Error && /"code":503|UNAVAILABLE|high demand/i.test(err.message);
+
+        if (isOverloaded && attempt < 2) {
+          console.warn(`Fit check ${model} attempt ${attempt} hit 503, retrying...`);
+          await new Promise((resolve) => setTimeout(resolve, attempt * 800));
+          continue;
+        }
+        if (isOverloaded) {
+          console.warn(`${model} unavailable, trying next model...`);
+        }
+        break;
       }
-
-      const text = response.text;
-      if (!text) {
-        throw new Error("Empty response from model.");
-      }
-
-      const result = JSON.parse(text) as FitCheckResult;
-      return NextResponse.json(result);
-    } catch (err) {
-      lastError = err;
-      const isOverloaded =
-        err instanceof Error && /"code":503|UNAVAILABLE|high demand/i.test(err.message);
-
-      if (isOverloaded && attempt < MAX_ATTEMPTS) {
-        console.warn(`Fit check attempt ${attempt} hit 503, retrying...`);
-        await new Promise((resolve) => setTimeout(resolve, attempt * 800));
-        continue;
-      }
-      break;
     }
   }
 

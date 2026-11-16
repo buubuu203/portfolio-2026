@@ -47,7 +47,7 @@ export function renderRichNodes(nodes: RichNode[]): ReactNode[] {
   return nodes.map((node, i) => {
     if (node.type === "bold") {
       return (
-        <strong key={i} className="font-semibold text-foreground">
+        <strong key={i} className="font-semibold text-[var(--text-primary)]">
           {node.value}
         </strong>
       );
@@ -59,7 +59,7 @@ export function renderRichNodes(nodes: RichNode[]): ReactNode[] {
           href={node.url}
           target="_blank"
           rel="noreferrer"
-          className="group inline-flex items-center gap-1 underline decoration-foreground/30 underline-offset-2 transition-colors hover:text-accent hover:decoration-accent"
+          className="group inline-flex items-center gap-1 underline decoration-[var(--text-tertiary)] underline-offset-2 transition-colors hover:text-[var(--accent)] hover:decoration-[var(--accent)]"
         >
           {node.label}
           <svg

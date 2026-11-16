@@ -1,7 +1,8 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { PostForm } from "@/components/admin/PostForm";
 import { getPostById } from "@/lib/posts";
 import { updatePost, deletePost } from "@/app/admin/actions";
+import { requireAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export default async function EditPostPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  try { await requireAdminSession(); } catch { redirect("/admin/login"); }
   const { id } = await params;
   const post = await getPostById(id);
 

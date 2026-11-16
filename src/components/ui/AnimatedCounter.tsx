@@ -7,12 +7,14 @@ export function AnimatedCounter({
   value,
   prefix = "",
   suffix = "",
+  decimals,
   duration = 1.4,
   className,
 }: {
   value: number;
   prefix?: string;
   suffix?: string;
+  decimals?: number;
   duration?: number;
   className?: string;
 }) {
@@ -38,9 +40,11 @@ export function AnimatedCounter({
       return;
     }
 
+    const dp = decimals ?? (value % 1 !== 0 ? String(value).split(".")[1]?.length ?? 0 : 0);
     const unsubscribe = springValue.on("change", (latest) => {
       if (ref.current) {
-        ref.current.textContent = `${prefix}${Math.round(latest).toLocaleString()}${suffix}`;
+        const formatted = dp > 0 ? latest.toFixed(dp) : Math.round(latest).toLocaleString();
+        ref.current.textContent = `${prefix}${formatted}${suffix}`;
       }
     });
     return unsubscribe;

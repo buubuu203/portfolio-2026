@@ -16,8 +16,12 @@ export function ProfilePhoto({ src, alt }: { src: string; alt: string }) {
       initial={shouldReduceMotion ? false : hidden}
       animate={shouldReduceMotion || preloaderReady ? shown : hidden}
       transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
-      style={{ transformPerspective: 1200 }}
-      className="relative mx-auto aspect-square w-full max-w-[560px] overflow-hidden rounded-[320px] lg:mx-0"
+      className="relative mx-auto h-[120px] w-[120px] overflow-hidden rounded-full sm:h-[148px] sm:w-[148px]"
+      style={{
+        transformPerspective: 1200,
+        boxShadow: "0 8px 30px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.08)",
+        animation: shouldReduceMotion ? "none" : "float 6s ease-in-out infinite",
+      }}
     >
       <Image
         src={src}
@@ -25,8 +29,8 @@ export function ProfilePhoto({ src, alt }: { src: string; alt: string }) {
         fill
         priority
         quality={90}
-        sizes="(min-width: 1024px) 640px, 560px"
-        className="object-contain"
+        sizes="148px"
+        className="object-cover"
       />
     </motion.div>
   );

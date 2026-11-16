@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 import { JOB_DESCRIPTION_MAX_LENGTH, JOB_DESCRIPTION_MIN_LENGTH, type FitCheckResult } from "@/lib/fitCheck";
 
 const verdictColor: Record<string, string> = {
-  "Strong fit": "text-accent",
-  "Good fit": "text-accent",
-  "Partial fit": "text-foreground/70",
-  "Not a fit": "text-foreground/50",
+  "Strong fit": "text-[var(--accent)]",
+  "Good fit": "text-[var(--accent)]",
+  "Partial fit": "text-[var(--text-secondary)]",
+  "Not a fit": "text-[var(--text-tertiary)]",
 };
 
 const verdictFlourish: Record<string, "burst" | "wobble" | "shake" | undefined> = {
@@ -40,7 +40,7 @@ function ThinkingDots() {
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="h-1.5 w-1.5 rounded-full bg-accent"
+          className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]"
           animate={shouldReduceMotion ? undefined : { y: [0, -6, 0] }}
           transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
         />
@@ -65,7 +65,8 @@ function LoadingPanel() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      className="flex items-center gap-3 rounded-2xl border border-foreground/10 px-6 py-5 text-foreground/60"
+      className="glass flex items-center gap-3 px-6 py-5 text-[var(--text-secondary)]"
+      style={{ borderRadius: "var(--radius-inner)" }}
     >
       <ThinkingDots />
       <AnimatePresence mode="wait">
@@ -99,7 +100,7 @@ function ConfettiBurst() {
       {pieces.map((p, i) => (
         <motion.span
           key={i}
-          className={cn("absolute h-1.5 w-1.5 rounded-full", i % 3 === 0 ? "bg-foreground/40" : "bg-accent")}
+          className={cn("absolute h-1.5 w-1.5 rounded-full", i % 3 === 0 ? "bg-[var(--text-tertiary)]" : "bg-[var(--accent)]")}
           initial={{ opacity: 1, x: 0, y: 0, scale: 1 }}
           animate={{ opacity: 0, x: p.x, y: p.y, scale: 0 }}
           transition={{ duration: 0.7, delay: p.delay, ease: "easeOut" }}
@@ -153,26 +154,44 @@ export function FitCheckForm() {
 
   return (
     <div className="flex flex-col gap-8">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-foreground/70">Job description</span>
-          <textarea
-            rows={10}
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            maxLength={JOB_DESCRIPTION_MAX_LENGTH}
-            placeholder="Paste a job description here..."
-            className="rounded-lg border border-foreground/15 bg-background px-4 py-3 text-foreground outline-none transition-colors placeholder:text-foreground/30 focus:border-accent"
-          />
-        </label>
-
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-xs text-foreground/40">
+      <form
+        onSubmit={handleSubmit}
+        className="glass"
+        style={{ borderRadius: "var(--radius-card)", padding: 32, display: "flex", flexDirection: "column", gap: 18 }}
+      >
+        <div className="flex items-baseline justify-between gap-3 flex-wrap">
+          <label htmlFor="jd" className="text-[17px] font-semibold">Job description</label>
+          <span className="text-[15px] font-semibold tabular-nums text-[var(--text-secondary)]">
             {jobDescription.trim().length}/{JOB_DESCRIPTION_MAX_LENGTH}
-          </p>
+          </span>
+        </div>
+        <textarea
+          id="jd"
+          rows={10}
+          value={jobDescription}
+          onChange={(e) => setJobDescription(e.target.value)}
+          maxLength={JOB_DESCRIPTION_MAX_LENGTH}
+          placeholder="Paste a job description here..."
+          className="field w-full text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]"
+          style={{ resize: "vertical" }}
+        />
+        <div className="flex items-center gap-4 flex-wrap">
           <Button type="submit" disabled={loading}>
             {loading ? "Analyzing..." : "Check fit"}
           </Button>
+          {loading && (
+            <span className="inline-flex items-center gap-2.5 text-[15px] font-semibold text-[var(--text-secondary)]">
+              <span
+                className="inline-block h-[18px] w-[18px] rounded-full"
+                style={{
+                  border: "3px solid rgba(29,29,31,.2)",
+                  borderTopColor: "#1d1d1f",
+                  animation: "spin .8s linear infinite",
+                }}
+              />
+              Reading the job description…
+            </span>
+          )}
         </div>
       </form>
 
@@ -185,7 +204,7 @@ export function FitCheckForm() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="text-sm text-red-500"
+            className="text-sm text-red-600"
           >
             {error}
           </motion.p>
@@ -198,58 +217,67 @@ export function FitCheckForm() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col gap-6 rounded-2xl border border-foreground/15 p-6 sm:p-8"
+            className="glass flex flex-col gap-5"
+            style={{ borderRadius: "var(--radius-card)", padding: 32 }}
           >
-            <div className="flex items-center justify-between gap-4">
-              <span className="relative inline-block">
-                {flourish === "burst" && <ConfettiBurst />}
-                <motion.p
-                  className={cn("text-2xl font-black tracking-tight", verdictColor[result.verdict] ?? "text-foreground")}
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    x: flourish === "shake" ? [0, -6, 6, -4, 4, 0] : 0,
-                    rotate: flourish === "wobble" ? [0, -3, 3, -2, 2, 0] : 0,
-                  }}
-                  transition={{
-                    default: { ...springPop, delay: 0.1 },
-                    x: flourish === "shake" ? { duration: 0.5, delay: 0.1, ease: "easeInOut" } : undefined,
-                    rotate: flourish === "wobble" ? { duration: 0.5, delay: 0.1, ease: "easeInOut" } : undefined,
-                  }}
-                >
-                  {result.verdict}
-                </motion.p>
+            <div className="flex items-center gap-2.5">
+              <span className="squircle squircle-md">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /></svg>
               </span>
-              <p className="text-sm font-medium text-foreground/50">
-                <AnimatedCounter value={Math.max(0, Math.min(100, result.score))} suffix="/100" duration={1} />
-              </p>
+              <div className="flex items-baseline gap-3 flex-1">
+                <span className="relative inline-block">
+                  {flourish === "burst" && <ConfettiBurst />}
+                  <motion.span
+                    className={cn("text-[24px] font-bold tracking-tight", verdictColor[result.verdict] ?? "text-[var(--text-primary)]")}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      x: flourish === "shake" ? [0, -6, 6, -4, 4, 0] : 0,
+                      rotate: flourish === "wobble" ? [0, -3, 3, -2, 2, 0] : 0,
+                    }}
+                    transition={{
+                      default: { ...springPop, delay: 0.1 },
+                      x: flourish === "shake" ? { duration: 0.5, delay: 0.1, ease: "easeInOut" } : undefined,
+                      rotate: flourish === "wobble" ? { duration: 0.5, delay: 0.1, ease: "easeInOut" } : undefined,
+                    }}
+                  >
+                    {result.verdict}
+                  </motion.span>
+                </span>
+                <span className="text-[15px] font-semibold tabular-nums text-[var(--text-secondary)]">
+                  <AnimatedCounter value={Math.max(0, Math.min(100, result.score))} suffix="/100" duration={1} />
+                </span>
+              </div>
             </div>
 
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-foreground/10">
+            <div className="h-[6px] w-full overflow-hidden rounded-[3px] bg-[rgba(29,29,31,.14)]">
               <motion.div
-                className="h-full rounded-full bg-accent"
+                className="h-full rounded-[3px] bg-gradient-to-r from-[#5c5c63] to-[#1d1d1f]"
                 initial={{ width: 0 }}
                 animate={{ width: `${Math.max(0, Math.min(100, result.score))}%` }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
 
-            <p className="text-foreground/70">{result.summary}</p>
+            <div style={{ borderRadius: 20, background: "rgba(255,255,255,.22)", border: "1px solid rgba(255,255,255,.55)", padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+              <p className="text-[13px] font-semibold uppercase tracking-[.05em] text-[var(--text-secondary)]" style={{ margin: 0 }}>Verdict</p>
+              <p className="text-[var(--text-secondary)]" style={{ margin: 0 }}>{result.summary}</p>
+            </div>
 
             {result.strengths.length > 0 && (
-              <div>
-                <p className="text-sm font-medium uppercase tracking-widest text-foreground/50">Strengths</p>
-                <ul className="mt-3 flex flex-col gap-2">
+              <div style={{ borderRadius: 20, background: "rgba(255,255,255,.22)", border: "1px solid rgba(255,255,255,.55)", padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+                <p className="text-[13px] font-semibold uppercase tracking-[.05em] text-[var(--text-secondary)]" style={{ margin: 0 }}>Where it lines up</p>
+                <ul className="flex flex-col gap-2">
                   {result.strengths.map((s, i) => (
                     <motion.li
                       key={s}
-                      className="flex gap-2.5 text-foreground/80"
+                      className="flex gap-2.5 text-[var(--text-secondary)]"
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.35, delay: 0.15 + i * 0.08 }}
                     >
-                      <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden />
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden />
                       {s}
                     </motion.li>
                   ))}
@@ -258,24 +286,35 @@ export function FitCheckForm() {
             )}
 
             {result.gaps.length > 0 && (
-              <div>
-                <p className="text-sm font-medium uppercase tracking-widest text-foreground/50">Gaps</p>
-                <ul className="mt-3 flex flex-col gap-2">
+              <div style={{ borderRadius: 20, background: "rgba(255,255,255,.22)", border: "1px solid rgba(255,255,255,.55)", padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+                <p className="text-[13px] font-semibold uppercase tracking-[.05em] text-[var(--text-secondary)]" style={{ margin: 0 }}>Where it does not</p>
+                <ul className="flex flex-col gap-2">
                   {result.gaps.map((g, i) => (
                     <motion.li
                       key={g}
-                      className="flex gap-2.5 text-foreground/60"
+                      className="flex gap-2.5 text-[var(--text-tertiary)]"
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.35, delay: 0.15 + (result.strengths.length + i) * 0.08 }}
                     >
-                      <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-foreground/30" aria-hidden />
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--text-tertiary)]" aria-hidden />
                       {g}
                     </motion.li>
                   ))}
                 </ul>
               </div>
             )}
+
+            <div>
+              <button
+                type="button"
+                onClick={() => { setResult(null); setJobDescription(""); }}
+                className="ghost spring-hover"
+                style={{ cursor: "pointer" }}
+              >
+                Check another
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

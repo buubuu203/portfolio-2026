@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import emailjs from "@emailjs/browser";
-import toast from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { identity } from "@/content/profile";
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 type FormState = {
   name: string;
@@ -17,31 +16,36 @@ type FormState = {
 
 const initialForm: FormState = { name: "", email: "", message: "" };
 
+const inputClass =
+  "glass w-full px-4 py-3 text-[15px] text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)]/50 focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:ring-offset-0 transition-shadow duration-200";
+
 export function ContactForm() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (error) setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      toast.error("Please fill in all fields.");
+      setError("Please fill in your name, a valid email and a message.");
       return;
     }
 
     if (!EMAIL_REGEX.test(form.email)) {
-      toast.error("Please enter a valid email address.");
+      setError("Please fill in your name, a valid email and a message.");
       return;
     }
 
     setLoading(true);
-    const toastId = toast.loading("Sending message...");
 
     try {
       const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
@@ -66,7 +70,7 @@ export function ContactForm() {
         publicKey
       );
 
-      await emailjs.send(
+      emailjs.send(
         serviceId,
         templateAutoReply,
         {
@@ -76,104 +80,135 @@ export function ContactForm() {
           from_name: identity.name,
         },
         publicKey
-      );
+      ).catch(() => {});
 
-      toast.success("Message sent. I'll get back to you soon.", { id: toastId });
       setForm(initialForm);
       setSent(true);
-      setTimeout(() => setSent(false), 4000);
     } catch (err) {
       console.error("EmailJS error:", err);
-      toast.error("Something went wrong. Please try again.", { id: toastId });
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSendAnother = () => {
+    setSent(false);
+    setForm(initialForm);
+    setError(null);
+  };
+
   return (
-    <div className="relative">
-      <AnimatePresence mode="wait">
-        {sent ? (
+    <AnimatePresence mode="wait">
+      {sent ? (
+        <motion.div
+          key="success"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-start gap-5"
+          style={{ minHeight: 300, justifyContent: "center" }}
+        >
           <motion.div
-            key="success"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-start gap-4 py-12"
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+            className="flex h-16 w-16 items-center justify-center"
+            style={{ borderRadius: 20, background: "linear-gradient(145deg,#7a7a82,#2c2c30)" }}
+            aria-hidden
           >
-            <motion.div
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-background"
-              aria-hidden
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M4 10.5L8 14.5L16 5.5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </motion.div>
-            <p className="text-lg font-medium">Message sent.</p>
-            <p className="text-foreground/60">Thanks for reaching out — I&apos;ll reply soon.</p>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12l5 5L20 7" />
+            </svg>
           </motion.div>
-        ) : (
-          <motion.form
-            key="form"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-6"
+          <h2 style={{ margin: 0, fontSize: 32, fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.15 }}>
+            Message sent.
+          </h2>
+          <p style={{ margin: 0, fontSize: 18, lineHeight: 1.4, color: "var(--text-secondary)" }}>
+            Thanks, I will get back to you soon.
+          </p>
+          <button
+            type="button"
+            onClick={handleSendAnother}
+            className="glass spring-hover rounded-full px-5 py-[10px] text-[15px] font-semibold text-[var(--text-primary)]"
           >
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-foreground/70">Full name</span>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Your name"
-                className="rounded-lg border border-foreground/15 bg-background px-4 py-3 text-foreground outline-none transition-colors placeholder:text-foreground/30 focus:border-accent"
-              />
-            </label>
+            Send another
+          </button>
+        </motion.div>
+      ) : (
+        <motion.form
+          key="form"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-[18px]"
+          noValidate
+        >
+          <label className="flex flex-col gap-2">
+            <span className="text-[15px] font-semibold text-[var(--text-secondary)]">Full name</span>
+            <input
+              type="text"
+              name="name"
+              required
+              autoComplete="name"
+              aria-label="Full name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Your name"
+              className={inputClass}
+              style={{ borderRadius: 28 }}
+            />
+          </label>
 
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-foreground/70">Email address</span>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className="rounded-lg border border-foreground/15 bg-background px-4 py-3 text-foreground outline-none transition-colors placeholder:text-foreground/30 focus:border-accent"
-              />
-            </label>
+          <label className="flex flex-col gap-2">
+            <span className="text-[15px] font-semibold text-[var(--text-secondary)]">Email address</span>
+            <input
+              type="email"
+              name="email"
+              required
+              autoComplete="email"
+              aria-label="Email address"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              className={inputClass}
+              style={{ borderRadius: 28 }}
+            />
+          </label>
 
-            <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-foreground/70">Message</span>
-              <textarea
-                rows={5}
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                placeholder="What are you reaching out about?"
-                className="rounded-lg border border-foreground/15 bg-background px-4 py-3 text-foreground outline-none transition-colors placeholder:text-foreground/30 focus:border-accent"
-              />
-            </label>
+          <label className="flex flex-col gap-2">
+            <span className="text-[15px] font-semibold text-[var(--text-secondary)]">Message</span>
+            <textarea
+              rows={6}
+              name="message"
+              required
+              aria-label="Message"
+              value={form.message}
+              onChange={handleChange}
+              placeholder="What are you reaching out about?"
+              className={inputClass}
+              style={{ borderRadius: 28, resize: "vertical" }}
+            />
+          </label>
 
-            <Button type="submit" disabled={loading} className="mt-2">
-              {loading ? "Sending..." : "Send message"}
-            </Button>
-          </motion.form>
-        )}
-      </AnimatePresence>
-    </div>
+          {error && (
+            <p
+              className="text-[15px] font-semibold"
+              style={{ background: "rgba(255,255,255,.5)", borderRadius: 14, padding: "10px 14px", margin: 0, color: "#dc2626" }}
+              role="alert"
+            >
+              {error}
+            </p>
+          )}
+
+          <Button type="submit" disabled={loading} className="mt-1">
+            {loading ? "Sending..." : "Send message"}
+          </Button>
+        </motion.form>
+      )}
+    </AnimatePresence>
   );
 }

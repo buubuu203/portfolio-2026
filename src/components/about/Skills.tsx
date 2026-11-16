@@ -1,44 +1,93 @@
 import { Section } from "@/components/ui/Section";
-import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
-import { Badge } from "@/components/ui/Badge";
-import { Icon } from "@/components/ui/Icon";
+import { Reveal } from "@/components/ui/Reveal";
 import { skills } from "@/content/profile";
 
-const groups: { label: string; items: string[] }[] = [
-  { label: "Methods", items: skills.methods },
-  { label: "Tools", items: skills.tools },
-  { label: "Languages", items: skills.languages },
+const toolIcons: Record<string, React.ReactNode> = {
+  Jira: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.001 1.001 0 0 0 23.013 0Z" /></svg>,
+  Confluence: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M.87 18.257c-.248.382-.53.875-.763 1.245a.764.764 0 0 0 .255 1.04l4.965 3.054a.764.764 0 0 0 1.058-.26c.199-.332.454-.763.733-1.221 1.967-3.247 3.945-2.853 7.508-1.146l4.957 2.337a.764.764 0 0 0 1.028-.382l2.364-5.346a.764.764 0 0 0-.382-1 599.851 599.851 0 0 1-4.965-2.361C10.911 10.97 5.224 11.185.87 18.257zM23.131 5.743c.249-.405.531-.875.764-1.25a.764.764 0 0 0-.256-1.034L18.675.404a.764.764 0 0 0-1.058.26c-.195.335-.451.763-.734 1.225-1.966 3.246-3.945 2.85-7.508 1.146L4.437.694a.764.764 0 0 0-1.027.382L1.046 6.422a.764.764 0 0 0 .382 1c1.039.49 3.105 1.467 4.965 2.361 6.698 3.246 12.392 3.029 16.738-4.04z" /></svg>,
+  Figma: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z" /></svg>,
+  Postman: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M13.527.099C6.955-.744.942 3.9.099 10.473c-.843 6.572 3.8 12.584 10.373 13.428 6.573.843 12.587-3.801 13.428-10.374C24.744 6.955 20.101.943 13.527.099zm2.471 7.485a.855.855 0 0 0-.593.25l-4.453 4.453-.307-.307-.643-.643c4.389-4.376 5.18-4.418 5.996-3.753zm-4.863 4.861l4.44-4.44a.62.62 0 1 1 .847.903l-4.699 4.125-.588-.588zm.33.694l-1.1.238a.06.06 0 0 1-.067-.032.06.06 0 0 1 .01-.073l.645-.645.512.512zm-2.803-.459l1.172-1.172.879.878-1.979.426a.074.074 0 0 1-.085-.039.072.072 0 0 1 .013-.093zm-3.646 6.058a.076.076 0 0 1-.069-.083.077.077 0 0 1 .022-.046h.002l.946-.946 1.222 1.222-2.123-.147zm2.425-1.256a.228.228 0 0 0-.117.256l.203.865a.125.125 0 0 1-.211.117h-.003l-.934-.934-.294-.295 3.762-3.758 1.82-.393.874.874c-1.255 1.102-2.971 2.201-5.1 3.268zm5.279-3.428h-.002l-.839-.839 4.699-4.125a.952.952 0 0 0 .119-.127c-.148 1.345-2.029 3.245-3.977 5.091zm3.657-6.46l-.003-.002a1.822 1.822 0 0 1 2.459-2.684l-1.61 1.613a.119.119 0 0 0 0 .169l1.247 1.247a1.817 1.817 0 0 1-2.093-.343zm2.578 0a1.714 1.714 0 0 1-.271.218h-.001l-1.207-1.207 1.533-1.533c.661.72.637 1.832-.054 2.522z" /></svg>,
+  Notion: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z" /></svg>,
+  GA4: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M22.84 2.9982v17.9987c.0086 1.6473-1.3197 2.9897-2.967 2.9984a2.9808 2.9808 0 01-.3677-.0208c-1.528-.226-2.6477-1.5558-2.6105-3.1V3.1204c-.0369-1.5458 1.0856-2.8762 2.6157-3.1 1.6361-.1915 3.1178.9796 3.3093 2.6158.014.1201.0208.241.0202.3619zM4.1326 18.0548c-1.6417 0-2.9726 1.331-2.9726 2.9726C1.16 22.6691 2.4909 24 4.1326 24s2.9726-1.3309 2.9726-2.9726-1.331-2.9726-2.9726-2.9726zm7.8728-9.0098c-.0171 0-.0342 0-.0513.0003-1.6495.0904-2.9293 1.474-2.891 3.1256v7.9846c0 2.167.9535 3.4825 2.3505 3.763 1.6118.3266 3.1832-.7152 3.5098-2.327.04-.1974.06-.3983.0593-.5998v-8.9585c.003-1.6474-1.33-2.9852-2.9773-2.9882z" /></svg>,
+  GTM: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M12.003 0a3 3 0 0 0-2.121 5.121l6.865 6.865-4.446 4.541 1.745 1.836a3.432 3.432 0 0 1 .7.739l.012.011-.001.002a3.432 3.432 0 0 1 .609 1.953 3.432 3.432 0 0 1-.09.78l7.75-7.647c.031-.029.067-.05.098-.08.023-.023.038-.052.06-.076a2.994 2.994 0 0 0-.06-4.166l-9-9A2.99 2.99 0 0 0 12.003 0zM8.63 2.133L.88 9.809a2.998 2.998 0 0 0 0 4.238l7.7 7.75a3.432 3.432 0 0 1-.077-.729 3.432 3.432 0 0 1 3.431-3.431 3.432 3.432 0 0 1 .826.101l-5.523-5.81 4.371-4.373-2.08-2.08c-.903-.904-1.193-2.183-.898-3.342zm3.304 16.004a2.932 2.932 0 0 0-2.931 2.931A2.932 2.932 0 0 0 11.934 24a2.932 2.932 0 0 0 2.932-2.932 2.932 2.932 0 0 0-2.932-2.931z" /></svg>,
+  SQL: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M21 6.375c0 2.692-4.03 4.875-9 4.875S3 9.067 3 6.375 7.03 1.5 12 1.5s9 2.183 9 4.875Z" /><path d="M12 12.75c2.685 0 5.19-.586 7.078-1.609a8.283 8.283 0 0 0 1.897-1.384c.016.121.025.244.025.368C21 12.817 16.97 15 12 15s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.285 8.285 0 0 0 1.897 1.384C6.809 12.164 9.315 12.75 12 12.75Z" /><path d="M12 16.5c2.685 0 5.19-.586 7.078-1.609a8.282 8.282 0 0 0 1.897-1.384c.016.121.025.244.025.368 0 2.692-4.03 4.875-9 4.875s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.284 8.284 0 0 0 1.897 1.384C6.809 15.914 9.315 16.5 12 16.5Z" /><path d="M12 20.25c2.685 0 5.19-.586 7.078-1.609a8.282 8.282 0 0 0 1.897-1.384c.016.121.025.244.025.368 0 2.692-4.03 4.875-9 4.875s-9-2.183-9-4.875c0-.124.009-.247.025-.368a8.284 8.284 0 0 0 1.897 1.384C6.809 19.664 9.315 20.25 12 20.25Z" /></svg>,
+  Git: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z" /></svg>,
+  Claude: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M4.709 15.955l4.397-10.985c.2-.498.741-.763 1.252-.591a5.347 5.347 0 0 1 2.192 1.37c.587.593 1.03 1.312 1.327 2.063l3.3 8.332c.133.335-.025.715-.354.859l-2.063.904a.671.671 0 0 1-.862-.326L10.586 9.76a1.978 1.978 0 0 0-.654-.842 1.966 1.966 0 0 0-.62-.334L5.52 17.49a.671.671 0 0 1-.862.326l-1.27-.556a.671.671 0 0 1-.354-.859l.675-1.682Zm7.95 2.138l-.89-2.248 1.943-.852.89 2.249a.671.671 0 0 0 .862.326l2.063-.904a.671.671 0 0 0 .354-.859l-3.3-8.332a3.33 3.33 0 0 1 1.088.76c.587.593 1.03 1.312 1.327 2.063l2.577 6.508c.133.335-.025.715-.354.859l-5.698 2.498a.671.671 0 0 1-.862-.326v.258Z" /></svg>,
+  Copilot: <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden><path d="M12 2a7 7 0 0 0-7 7v1.07A5.5 5.5 0 0 0 2 15.5 5.5 5.5 0 0 0 7.5 21h1a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H7a3.5 3.5 0 0 0-3.46 3A3.5 3.5 0 0 1 7 9h.17A7 7 0 0 0 12 2zm0 0a7 7 0 0 1 7 7v1.07A5.5 5.5 0 0 1 22 15.5 5.5 5.5 0 0 1 16.5 21h-1a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5H17a3.5 3.5 0 0 1 3.46 3A3.5 3.5 0 0 0 17 9h-.17A7 7 0 0 1 12 2z" /></svg>,
+};
+
+const ICON_GRADIENTS = [
+  "linear-gradient(145deg,#7a7a82,#2c2c30)",
+  "linear-gradient(145deg,#5c5c63,#1d1d1f)",
 ];
 
 export function Skills() {
   return (
-    <Section className="border-t border-foreground/10">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[240px_1fr]">
+    <Section id="skills">
+      <Reveal>
+        <div className="flex items-center gap-2.5">
+          <span className="squircle squircle-md">
+            <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden>
+              <path d="M4 7h10M18 7h2M4 17h2M10 17h10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="16" cy="7" r="2" stroke="white" strokeWidth="2" />
+              <circle cx="8" cy="17" r="2" stroke="white" strokeWidth="2" />
+            </svg>
+          </span>
+          <span className="text-[14px] font-semibold uppercase tracking-[.06em] text-[var(--text-secondary)]">Skills</span>
+        </div>
+        <h2
+          className="mt-[14px] font-bold"
+          style={{ fontSize: "clamp(32px, 8.5vw, 56px)", letterSpacing: "-0.03em", lineHeight: 1.07 }}
+        >
+          What I work with.
+        </h2>
+      </Reveal>
+
+      <div className="mt-9 flex flex-col gap-4">
+        {/* Methods — full-width row */}
         <Reveal>
-          <h2 className="text-3xl font-black leading-none tracking-tight sm:text-4xl">
-            What I
-            <br />
-            work with.
-          </h2>
+          <div className="glass spring-lift flex flex-col gap-[18px]" style={{ borderRadius: "var(--radius-card)", padding: "clamp(22px, 3vw, 36px)" }}>
+            <p style={{ margin: 0, fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em" }}>Methods</p>
+            <div className="flex flex-wrap gap-2.5">
+              {skills.methods.map((m) => (
+                <span key={m} className="chip">{m}</span>
+              ))}
+            </div>
+          </div>
         </Reveal>
 
-        <div className="max-w-2xl space-y-10">
-          {groups.map((group) => (
-            <div key={group.label}>
-              <p className="text-sm uppercase tracking-widest text-foreground/50">{group.label}</p>
-              <RevealGroup className="mt-4 flex flex-wrap gap-3">
-                {group.items.map((item) => (
-                  <RevealItem key={item}>
-                    <Badge className={group.label === "Tools" ? "gap-1.5" : undefined}>
-                      {group.label === "Tools" && <Icon name={item} className="text-foreground/60" />}
-                      {item}
-                    </Badge>
-                  </RevealItem>
+        {/* Tools (2fr) + Languages (1fr) side by side */}
+        <Reveal delay={0.05}>
+          <div className="skills-row">
+            <div className="glass spring-lift flex flex-col gap-5" style={{ borderRadius: "var(--radius-card)", padding: "clamp(22px, 3vw, 36px)" }}>
+              <p style={{ margin: 0, fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em" }}>Tools</p>
+              <div className="flex flex-wrap" style={{ gap: "22px 24px" }}>
+                {skills.tools.map((tool, i) => (
+                  <div key={tool} className="dockitem tool-icon-hover">
+                    <div className="dockicon" style={{ background: ICON_GRADIENTS[i % 2] }}>
+                      {toolIcons[tool] ?? (
+                        <span className="text-[13px] font-bold text-white">{tool.slice(0, 2)}</span>
+                      )}
+                    </div>
+                    {tool}
+                  </div>
                 ))}
-              </RevealGroup>
+              </div>
             </div>
-          ))}
-        </div>
+
+            <div className="glass spring-lift flex flex-col gap-3.5" style={{ borderRadius: "var(--radius-card)", padding: "clamp(22px, 3vw, 36px)" }}>
+              <p style={{ margin: 0, fontSize: 24, fontWeight: 700, letterSpacing: "-0.02em" }}>Languages</p>
+              <div>
+                <p style={{ margin: 0, fontSize: 20, fontWeight: 600 }}>Vietnamese</p>
+                <p style={{ margin: 0, fontSize: 15 }} className="text-[var(--text-secondary)]">Native</p>
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: 20, fontWeight: 600 }}>English</p>
+                <p style={{ margin: 0, fontSize: 15 }} className="text-[var(--text-secondary)]">IELTS 6.5</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </div>
     </Section>
   );

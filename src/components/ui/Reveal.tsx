@@ -11,15 +11,16 @@ type RevealProps = {
   as?: "div" | "li";
 };
 
-export function Reveal({ children, className, delay = 0, y = 16, as = "div" }: RevealProps) {
+export function Reveal({ children, className, delay = 0, y = 32, as = "div" }: RevealProps) {
   const shouldReduceMotion = useReducedMotion();
 
   const variants: Variants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : y },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : y, scale: shouldReduceMotion ? 1 : 0.96 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] },
+      scale: 1,
+      transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
     },
   };
 
@@ -30,7 +31,7 @@ export function Reveal({ children, className, delay = 0, y = 16, as = "div" }: R
       className={cn(className)}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-80px 0px" }}
+      viewport={{ once: true, margin: "-60px 0px" }}
       variants={variants}
     >
       {children}
@@ -41,7 +42,7 @@ export function Reveal({ children, className, delay = 0, y = 16, as = "div" }: R
 export function RevealGroup({
   children,
   className,
-  stagger = 0.08,
+  stagger = 0.12,
   as = "div",
 }: {
   children: React.ReactNode;
@@ -63,7 +64,7 @@ export function RevealGroup({
       className={cn(className)}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-80px 0px" }}
+      viewport={{ once: true, margin: "-60px 0px" }}
       variants={container}
     >
       {children}
@@ -74,7 +75,7 @@ export function RevealGroup({
 export function RevealItem({
   children,
   className,
-  y = 16,
+  y = 32,
   as = "div",
 }: {
   children: React.ReactNode;
@@ -85,11 +86,12 @@ export function RevealItem({
   const shouldReduceMotion = useReducedMotion();
 
   const item: Variants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : y },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : y, scale: shouldReduceMotion ? 1 : 0.96 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+      scale: 1,
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
     },
   };
 

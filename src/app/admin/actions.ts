@@ -51,10 +51,23 @@ export async function uploadCoverImage(
 
 export type LoginState = { error?: string } | undefined;
 
+const loginAttempts = new Map<string, { count: number; lastAttempt: number }>();
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
+
 export async function login(
   _prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
+  const { headers } = await import("next/headers");
+  const headerStore = await headers();
+  const ip = headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+
+  const record = loginAttempts.get(ip);
+  if (record && record.count >= MAX_ATTEMPTS && Date.now() - record.lastAttempt < LOCKOUT_MS) {
+    return { error: "Too many attempts. Try again in 15 minutes." };
+  }
+
   const password = formData.get("password");
 
   if (typeof password !== "string" || password.length === 0) {
@@ -62,8 +75,17 @@ export async function login(
   }
 
   if (!isCorrectAdminPassword(password)) {
+    const prev = loginAttempts.get(ip);
+    const now = Date.now();
+    if (prev && now - prev.lastAttempt < LOCKOUT_MS) {
+      loginAttempts.set(ip, { count: prev.count + 1, lastAttempt: now });
+    } else {
+      loginAttempts.set(ip, { count: 1, lastAttempt: now });
+    }
     return { error: "Incorrect password." };
   }
+
+  loginAttempts.delete(ip);
 
   const cookieStore = await cookies();
   cookieStore.set(ADMIN_SESSION_COOKIE, createAdminSessionToken(), {

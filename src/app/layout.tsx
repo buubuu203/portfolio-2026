@@ -1,24 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
-import { Toaster } from "react-hot-toast";
-import { Navbar } from "@/components/layout/Navbar";
+import { DockNav } from "@/components/layout/DockNav";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Preloader } from "@/components/layout/Preloader";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { WallpaperBlobs } from "@/components/layout/WallpaperBlobs";
 import { education, identity, siteUrl } from "@/content/profile";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -109,15 +99,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className="h-full antialiased">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
       <body className="min-h-full flex flex-col">
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`}
-        </Script>
         <Script id="gtm-script" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -139,22 +127,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c"),
           }}
         />
+        <WallpaperBlobs />
         <Preloader>
-          <Toaster
-            position="bottom-center"
-            toastOptions={{
-              style: {
-                background: "var(--foreground)",
-                color: "var(--background)",
-                borderRadius: "9999px",
-                fontSize: "0.875rem",
-                padding: "0.75rem 1.25rem",
-              },
-            }}
-          />
-          <Navbar />
+          <ScrollProgress />
           <PageTransition>{children}</PageTransition>
           <Footer />
+          <DockNav />
         </Preloader>
         <Analytics />
       </body>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import { Section } from "@/components/ui/Section";
 import { getPostBySlug } from "@/lib/posts";
 import { estimateReadingTime } from "@/lib/posts";
@@ -73,15 +74,20 @@ export default async function BlogPostPage({
   };
 
   return (
-    <Section className="pt-16">
+    <Section className="pt-6 sm:pt-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <h1 className="font-black tracking-tight text-4xl sm:text-6xl">{post.title}</h1>
-      <p className="mt-4 text-foreground/60">
+      <h1
+        className="max-w-3xl font-bold"
+        style={{ fontSize: "clamp(32px, 8.5vw, 56px)", letterSpacing: "-0.03em", lineHeight: 1.07 }}
+      >
+        {post.title}
+      </h1>
+      <p className="mt-3 text-[14px] text-[var(--text-tertiary)] sm:mt-4">
         {post.date.toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
@@ -90,13 +96,13 @@ export default async function BlogPostPage({
         · {estimateReadingTime(post.content)}
       </p>
       {post.coverImage && (
-        <div className="mt-8 aspect-video w-full max-w-2xl overflow-hidden rounded-2xl">
+        <div className="mt-6 aspect-video w-full max-w-2xl overflow-hidden sm:mt-8" style={{ borderRadius: "var(--radius-card)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={post.coverImage} alt="" className="h-full w-full object-cover" />
         </div>
       )}
-      <div className="prose mt-12 max-w-2xl [&_table]:w-full [&_td]:border [&_td]:border-foreground/20 [&_td]:p-2 [&_th]:border [&_th]:border-foreground/20 [&_th]:bg-foreground/5 [&_th]:p-2">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+      <div className="prose mt-8 max-w-2xl sm:mt-10 [&_table]:w-full [&_td]:border [&_td]:border-[var(--text-tertiary)]/15 [&_td]:p-2 [&_th]:border [&_th]:border-[var(--text-tertiary)]/15 [&_th]:bg-white/10 [&_th]:p-2">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeSanitize]}>
           {post.content}
         </ReactMarkdown>
       </div>

@@ -17,19 +17,19 @@ type ButtonAsButton = BaseProps &
 type ButtonProps = ButtonAsLink | ButtonAsButton;
 
 const base =
-  "group relative inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  "spring-hover group relative inline-flex items-center justify-center gap-2 rounded-[var(--radius-pill)] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
 const variants = {
   primary:
-    "bg-foreground text-background hover:bg-accent focus-visible:ring-accent",
+    "bg-[var(--accent)] text-white shadow-[0_10px_24px_rgba(0,0,0,.25)]",
   secondary:
-    "border border-foreground/20 text-foreground hover:border-foreground/60 focus-visible:ring-foreground/40",
-  ghost: "text-foreground hover:text-accent focus-visible:ring-accent",
+    "glass text-[var(--text-primary)]",
+  ghost: "bg-[rgba(255,255,255,.35)] border border-[rgba(255,255,255,.7)] text-[var(--text-primary)]",
 };
 
 const sizes = {
-  sm: "px-4 py-2 text-sm",
-  md: "px-6 py-3 text-base",
+  sm: "px-[18px] py-[10px] text-[15px] min-h-[44px]",
+  md: "px-6 py-[13px] text-[17px] min-h-[44px]",
 };
 
 export function Button({

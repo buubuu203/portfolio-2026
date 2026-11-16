@@ -6,6 +6,17 @@ datasource db {
   provider = "postgresql"
 }
 
+model HobbyVideo {
+  id          String   @id @default(cuid())
+  url         String
+  caption     String   @default("")
+  category    String   @default("piano")
+  aspectRatio String   @default("16:9")
+  duration    Int      @default(30)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
 model Post {
   id          String   @id @default(cuid())
   slug        String   @unique

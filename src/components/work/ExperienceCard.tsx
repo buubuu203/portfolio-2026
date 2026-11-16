@@ -1,153 +1,211 @@
-"use client";
-
-import { useRef } from "react";
 import Image from "next/image";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
-import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
-import { Badge } from "@/components/ui/Badge";
-import { StatGrid } from "@/components/work/StatGrid";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { Reveal } from "@/components/ui/Reveal";
 import type { Experience } from "@/content/profile";
 import { renderRichText } from "@/lib/richText";
 
-const MAX_TILT_DEG = 2;
-const SPRING = { stiffness: 220, damping: 24, mass: 0.6 };
-
 export function ExperienceCard({ experience }: { experience: Experience }) {
-  const shouldReduceMotion = useReducedMotion();
-  const cardRef = useRef<HTMLElement>(null);
-
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
-  const lift = useMotionValue(0);
-  const springRotateX = useSpring(rotateX, SPRING);
-  const springRotateY = useSpring(rotateY, SPRING);
-  const springLift = useSpring(lift, SPRING);
-
-  function handleMouseMove(event: React.MouseEvent<HTMLElement>) {
-    if (shouldReduceMotion) return;
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const px = (event.clientX - rect.left) / rect.width - 0.5;
-    const py = (event.clientY - rect.top) / rect.height - 0.5;
-    rotateY.set(px * MAX_TILT_DEG * 2);
-    rotateX.set(py * -MAX_TILT_DEG * 2);
-  }
-
-  function handleMouseEnter() {
-    if (!shouldReduceMotion) lift.set(-3);
-  }
-
-  function handleMouseLeave() {
-    rotateX.set(0);
-    rotateY.set(0);
-    lift.set(0);
-  }
+  const isCakeLogo = experience.markImage?.src.includes("cake") ?? false;
+  const isMindxLogo = experience.markImage?.src.includes("mindx") ?? false;
+  const isWideLogo = isCakeLogo || isMindxLogo;
+  const roleMatch = experience.role.match(/^(.+?)(?:\s*\((.+?)\))?$/);
+  const mainRole = roleMatch?.[1] ?? experience.role;
+  const roleNote = roleMatch?.[2];
 
   return (
-    <motion.article
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX: springRotateX,
-        rotateY: springRotateY,
-        y: springLift,
-        transformPerspective: 1400,
-      }}
-      className="-mx-3 border-t border-foreground/10 px-6 py-16 transition-colors duration-300 ease-out first:border-t-0 first:pt-10 hover:bg-foreground/[0.03] sm:-mx-4 sm:px-8 lg:-mx-6 lg:px-12"
-    >
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[240px_1fr]">
-        <Reveal>
-          <p className="text-sm text-foreground/60">{experience.period}</p>
-          <div className="mt-1 flex items-center gap-1.5">
-            {experience.markImage ? (
-              <Image
-                src={experience.markImage.src}
-                alt={experience.markImage.alt}
-                width={experience.markImage.width}
-                height={experience.markImage.height}
-                className="h-[18px] w-auto flex-none object-contain"
-              />
-            ) : (
-              experience.mark && (
-                <span
-                  aria-hidden
-                  className="grid h-[18px] w-[18px] flex-none place-items-center rounded-[4px] bg-foreground text-[10px] font-extrabold leading-none text-background"
-                >
-                  {experience.mark}
-                </span>
-              )
-            )}
-            <p className="text-sm text-foreground/60">{experience.company}</p>
-          </div>
-          <p className="mt-4 text-sm font-medium text-foreground/70">{experience.role}</p>
-        </Reveal>
-
-        <div className="max-w-3xl">
-          <Reveal>
-            <h3 className="font-black tracking-tight text-3xl sm:text-4xl">{experience.title}</h3>
-            <p className="mt-4 text-lg text-foreground/70">{renderRichText(experience.summary)}</p>
-          </Reveal>
-
-          {experience.partners && experience.partners.length > 0 && (
-            <Reveal delay={0.05}>
-              <p className="mt-6 text-sm uppercase tracking-widest text-foreground/50">
-                Partner &amp; platform integrations
+    <Reveal>
+      <article
+        className="glass spring-lift"
+        style={{ borderRadius: "var(--radius-card)", padding: "clamp(22px, 3vw, 36px)", display: "flex", flexDirection: "column", gap: 24 }}
+      >
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px 20px", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", gap: 16, alignItems: "center", minWidth: 0 }}>
+            <div
+              style={{
+                flex: "none",
+                width: isWideLogo ? undefined : 60,
+                minWidth: 60,
+                height: 60,
+                padding: isWideLogo ? "0 14px" : 6,
+                boxSizing: "border-box",
+                borderRadius: 18,
+                background: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 1px 0 rgba(255,255,255,.9) inset, 0 8px 18px rgba(0,0,0,.14)",
+              }}
+            >
+              {experience.markImage ? (
+                <Image
+                  src={experience.markImage.src}
+                  alt={experience.markImage.alt}
+                  width={experience.markImage.width}
+                  height={experience.markImage.height}
+                  loading="eager"
+                  style={{ height: isWideLogo ? 22 : 40, width: "auto", maxWidth: isWideLogo ? 90 : 48, display: "block" }}
+                />
+              ) : (
+                <span style={{ fontSize: 22, fontWeight: 700 }}>{experience.mark}</span>
+              )}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <h3 style={{ margin: 0, fontSize: "clamp(22px, 5vw, 28px)", lineHeight: 1.15, fontWeight: 700, letterSpacing: "-0.025em" }}>
+                {mainRole}
+              </h3>
+              <p style={{ margin: "4px 0 0", fontSize: 17, color: "var(--text-secondary)" }}>
+                {experience.company}{roleNote ? ` · ${roleNote}` : ""}
               </p>
-              <RevealGroup className="mt-3 flex flex-wrap items-center gap-4">
-                {experience.partners.map((partner) => {
-                  const logoImg = partner.logo && (
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                background: "rgba(255,255,255,.3)",
+                border: "1px solid rgba(255,255,255,.6)",
+                borderRadius: 999,
+                padding: "7px 14px",
+                fontSize: 14,
+                fontWeight: 600,
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+              {experience.period}
+            </span>
+            <span
+              style={{
+                background: "#1d1d1f",
+                color: "#fff",
+                borderRadius: 999,
+                padding: "7px 14px",
+                fontSize: 14,
+                fontWeight: 600,
+              }}
+            >
+              {experience.title}
+            </span>
+          </div>
+        </div>
+
+        <p style={{ margin: 0, fontSize: "clamp(17px, 3vw, 20px)", lineHeight: 1.5, color: "var(--text-secondary)" }}>
+          {renderRichText(experience.summary)}
+        </p>
+
+        {experience.metrics.length > 0 && (
+          <div className="work-metric-grid">
+            {experience.metrics.map((metric) => (
+              <div
+                key={metric.label}
+                className="glass spring-hover work-metric-tile"
+                style={{
+                  borderRadius: 28,
+                  padding: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 4,
+                  overflow: "hidden",
+                }}
+              >
+                <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "var(--text-secondary)" }}>{metric.label}</p>
+                <p style={{ margin: "8px 0 0", fontSize: "clamp(32px, 5vw, 48px)", lineHeight: 1.1, fontWeight: 700, letterSpacing: "-0.04em" }}>
+                  <AnimatedCounter value={metric.value} prefix={metric.prefix} suffix={metric.suffix} />
+                </p>
+                {metric.description && (
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: "var(--text-secondary)" }}>{metric.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {experience.partners && experience.partners.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 600, letterSpacing: ".05em", textTransform: "uppercase" as const, color: "var(--text-secondary)" }}>
+              Partners &amp; platform integrations
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {experience.partners.map((partner) => (
+                <span key={partner.name} className="chip">
+                  {partner.logo && (
                     <Image
                       src={partner.logo.src}
-                      alt={partner.logo.alt}
+                      alt={partner.showName ? "" : partner.logo.alt}
                       width={partner.logo.width}
                       height={partner.logo.height}
-                      className="h-5 w-auto object-contain"
+                      loading="eager"
+                      style={{ width: "auto", height: 20, maxWidth: 88, objectFit: "contain" }}
                     />
-                  );
-
-                  if (!partner.logo) {
-                    return (
-                      <RevealItem key={partner.name}>
-                        <Badge className="border-accent/30 text-foreground">{partner.name}</Badge>
-                      </RevealItem>
-                    );
-                  }
-
-                  return (
-                    <RevealItem key={partner.name}>
-                      <span className="inline-flex items-center gap-2 transition-transform duration-200 ease-out hover:scale-110">
-                        {logoImg}
-                        {partner.showName && partner.name}
-                      </span>
-                    </RevealItem>
-                  );
-                })}
-              </RevealGroup>
-            </Reveal>
-          )}
-
-          <Reveal delay={0.1}>
-            <ul className="mt-8 space-y-2">
-              {experience.highlights.map((item, i) => (
-                <li key={i} className="flex gap-3 text-foreground/70">
-                  <span aria-hidden className="text-foreground/30">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span>{renderRichText(item)}</span>
-                </li>
+                  )}
+                  {(!partner.logo || partner.showName) && partner.name}
+                </span>
               ))}
-            </ul>
-          </Reveal>
-
-          {experience.metrics.length > 0 && (
-            <div className="mt-10">
-              <StatGrid metrics={experience.metrics} />
             </div>
-          )}
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {experience.highlights.map((item, i) => (
+            <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+              <div
+                style={{
+                  flex: "none",
+                  width: 28,
+                  height: 28,
+                  borderRadius: "50%",
+                  background: i % 2 === 0
+                    ? "linear-gradient(145deg,#7a7a82,#2c2c30)"
+                    : "linear-gradient(145deg,#5c5c63,#1d1d1f)",
+                  color: "#fff",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: 1,
+                }}
+              >
+                {i + 1}
+              </div>
+              <p style={{ margin: 0, fontSize: 18, lineHeight: 1.5, letterSpacing: "-0.005em" }}>
+                {renderRichText(item)}
+              </p>
+            </div>
+          ))}
         </div>
-      </div>
-    </motion.article>
+
+        {experience.links && experience.links.length > 0 && (
+          <div className="glass" style={{ borderRadius: 24, overflow: "hidden" }}>
+            {experience.links.map((link, i) => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="settings-row spring-hover"
+                style={{ color: "#1d1d1f" }}
+              >
+                <span
+                  className="squircle squircle-sm"
+                  style={{
+                    background: i % 2 === 0
+                      ? "linear-gradient(145deg,#5c5c63,#1d1d1f)"
+                      : "linear-gradient(145deg,#7a7a82,#2c2c30)",
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg>
+                </span>
+                <span style={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" as const }}>
+                  <span style={{ display: "block", fontSize: 17 }}>{link.label}</span>
+                </span>
+                <span style={{ fontSize: 20, color: "#55555c" }} aria-hidden="true">›</span>
+              </a>
+            ))}
+          </div>
+        )}
+      </article>
+    </Reveal>
   );
 }

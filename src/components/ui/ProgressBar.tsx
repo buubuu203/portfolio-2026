@@ -18,8 +18,6 @@ export function ProgressBar({
   const shouldReduceMotion = useReducedMotion();
 
   const isOverTarget = percent > 100;
-  // When over target, scale the track to the actual percent so the fill
-  // reaches full width and a marker can flag where the 100% target sat.
   const scale = Math.max(percent, 100);
   const fillWidth = (percent / scale) * 100;
   const targetMarkerPosition = isOverTarget ? (100 / scale) * 100 : null;
@@ -28,11 +26,11 @@ export function ProgressBar({
     <div ref={ref} className={cn("w-full", className)}>
       {label && (
         <div className="mb-2 flex items-center justify-between text-sm">
-          <span className="text-foreground/70">{label}</span>
+          <span className="text-[var(--text-tertiary)]">{label}</span>
           <span className="flex items-center gap-1.5">
-            <span className="font-medium text-foreground">{percent}%</span>
+            <span className="font-semibold text-[var(--text-primary)]">{percent}%</span>
             {isOverTarget && (
-              <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs font-semibold text-accent">
+              <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-xs font-semibold text-[var(--accent)]">
                 +{percent - 100}% over target
               </span>
             )}
@@ -46,22 +44,20 @@ export function ProgressBar({
             className="absolute bottom-0 flex -translate-x-1/2 flex-col items-center"
             style={{ left: `${targetMarkerPosition}%` }}
           >
-            <span className="text-[9px] font-semibold uppercase tracking-wider text-foreground/40">
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
               Target
             </span>
-            <span className="mt-0.5 h-1.5 w-px bg-foreground/40" />
+            <span className="mt-0.5 h-1.5 w-px bg-[var(--text-tertiary)]" />
           </div>
         </div>
       )}
 
-      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-foreground/10">
+      <div className="relative h-[6px] w-full overflow-hidden rounded-[3px] bg-[rgba(29,29,31,.14)]">
         <motion.div
-          className={cn(
-            "h-full rounded-full",
-            isOverTarget ? "bg-gradient-to-r from-accent/50 to-accent" : "bg-accent"
-          )}
-          initial={{ width: 0 }}
-          animate={{ width: isInView ? `${fillWidth}%` : 0 }}
+          className="h-full rounded-[3px] bg-gradient-to-r from-[#5c5c63] to-[#1d1d1f]"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: isInView ? fillWidth / 100 : 0 }}
+          style={{ transformOrigin: "left" }}
           transition={
             shouldReduceMotion
               ? { duration: 0 }
@@ -70,7 +66,7 @@ export function ProgressBar({
         />
         {isOverTarget && (
           <motion.div
-            className="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-transparent to-accent/40"
+            className="absolute inset-y-0 right-0 w-6 bg-gradient-to-r from-transparent to-[var(--accent)]/30"
             initial={{ opacity: 0 }}
             animate={{ opacity: isInView ? [0.4, 0.9, 0.4] : 0 }}
             transition={
@@ -83,7 +79,7 @@ export function ProgressBar({
         {targetMarkerPosition !== null && (
           <div
             aria-hidden
-            className="absolute top-0 h-full w-px bg-background/70"
+            className="absolute top-0 h-full w-px bg-white/60"
             style={{ left: `${targetMarkerPosition}%` }}
           />
         )}
