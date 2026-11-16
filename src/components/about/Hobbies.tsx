@@ -9,6 +9,7 @@ type VideoData = {
   caption: string | null;
   aspectRatio: string | null;
   duration: number | null;
+  category: string;
 };
 
 export async function Hobbies() {
