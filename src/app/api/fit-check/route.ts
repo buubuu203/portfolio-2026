@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash-lite", "gemini-3.8-flash"] as const;
+  const MODELS = ["gemini-3.5-flash-lite", "gemini-3.8-flash"] as const;
   const PER_CALL_TIMEOUT_MS = 12_000;
   let lastError: unknown;
 
