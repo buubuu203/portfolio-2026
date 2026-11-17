@@ -128,7 +128,7 @@ export function VideoPlayer({
           <video
             ref={videoRef}
             src={src}
-            poster={poster}
+            poster={poster || undefined}
             preload="metadata"
             playsInline
             loop

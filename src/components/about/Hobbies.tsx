@@ -121,7 +121,7 @@ function HobbyCategory({
                 {video.url ? (
                   <VideoPlayer
                     src={video.url}
-                    poster={video.url.replace(/\.mp4$/, "-poster.jpg")}
+                    poster={video.url.startsWith("/") ? video.url.replace(/\.mp4$/, "-poster.jpg") : ""}
                     aspectRatio={isWide ? "16/9" : "3/4"}
                     duration={video.duration ?? 30}
                     tag=""
