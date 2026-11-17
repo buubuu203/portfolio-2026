@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite"] as const;
+  const MODELS = ["gemini-2.0-flash", "gemini-3.5-flash-lite", "gemini-3.8-flash"] as const;
   let lastError: unknown;
 
   for (const model of MODELS) {
@@ -115,15 +115,16 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(result);
       } catch (err) {
         lastError = err;
-        const isOverloaded =
-          err instanceof Error && /"code":503|UNAVAILABLE|high demand/i.test(err.message);
+        const isRetryable =
+          err instanceof Error &&
+          /503|UNAVAILABLE|high demand|overloaded|rate.?limit|429|RESOURCE_EXHAUSTED/i.test(err.message);
 
-        if (isOverloaded && attempt < 2) {
+        if (isRetryable && attempt < 2) {
           console.warn(`Fit check ${model} attempt ${attempt} hit 503, retrying...`);
           await new Promise((resolve) => setTimeout(resolve, attempt * 800));
           continue;
         }
-        if (isOverloaded) {
+        if (isRetryable) {
           console.warn(`${model} unavailable, trying next model...`);
         }
         break;
@@ -132,11 +133,12 @@ export async function POST(request: NextRequest) {
   }
 
   console.error("Fit check generation failed:", lastError);
-  const isOverloaded =
-    lastError instanceof Error && /"code":503|UNAVAILABLE|high demand/i.test(lastError.message);
+  const isRetryableError =
+    lastError instanceof Error &&
+    /503|UNAVAILABLE|high demand|overloaded|rate.?limit|429|RESOURCE_EXHAUSTED/i.test(lastError.message);
   return NextResponse.json(
     {
-      error: isOverloaded
+      error: isRetryableError
         ? "The AI model is experiencing high demand right now. Please try again in a minute."
         : "Couldn't analyze that right now. Please try again.",
     },
