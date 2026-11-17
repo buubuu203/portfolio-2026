@@ -101,7 +101,6 @@ export async function POST(request: NextRequest) {
               responseMimeType: "application/json",
               responseSchema: fitCheckResponseSchema,
               maxOutputTokens: 4096,
-              thinkingConfig: { thinkingBudget: 0 },
             },
           }),
           new Promise<never>((_, reject) =>
