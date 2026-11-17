@@ -8,6 +8,8 @@ import {
   type FitCheckResult,
 } from "@/lib/fitCheck";
 
+export const maxDuration = 60;
+
 const RATE_LIMIT_MAX_REQUESTS = 8;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 
@@ -84,22 +86,28 @@ export async function POST(request: NextRequest) {
 
   const ai = new GoogleGenAI({ apiKey });
   const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash-lite", "gemini-3.8-flash"] as const;
+  const PER_CALL_TIMEOUT_MS = 12_000;
   let lastError: unknown;
 
   for (const model of MODELS) {
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
       try {
-        const response = await ai.models.generateContent({
-          model,
-          contents: `Job description to evaluate:\n\n${trimmed}`,
-          config: {
-            systemInstruction: buildFitCheckSystemInstruction(),
-            responseMimeType: "application/json",
-            responseSchema: fitCheckResponseSchema,
-            maxOutputTokens: 4096,
-            thinkingConfig: { thinkingBudget: 0 },
-          },
-        });
+        const response = await Promise.race([
+          ai.models.generateContent({
+            model,
+            contents: `Job description to evaluate:\n\n${trimmed}`,
+            config: {
+              systemInstruction: buildFitCheckSystemInstruction(),
+              responseMimeType: "application/json",
+              responseSchema: fitCheckResponseSchema,
+              maxOutputTokens: 4096,
+              thinkingConfig: { thinkingBudget: 0 },
+            },
+          }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("TIMEOUT: model call exceeded time limit")), PER_CALL_TIMEOUT_MS)
+          ),
+        ]);
 
         const finishReason = response.candidates?.[0]?.finishReason;
         if (finishReason === "MAX_TOKENS") {
@@ -117,11 +125,11 @@ export async function POST(request: NextRequest) {
         lastError = err;
         const isRetryable =
           err instanceof Error &&
-          /503|UNAVAILABLE|high demand|overloaded|rate.?limit|429|RESOURCE_EXHAUSTED/i.test(err.message);
+          /503|UNAVAILABLE|high demand|overloaded|rate.?limit|429|RESOURCE_EXHAUSTED|TIMEOUT/i.test(err.message);
 
-        if (isRetryable && attempt < 3) {
-          console.warn(`Fit check ${model} attempt ${attempt} hit 503, retrying...`);
-          await new Promise((resolve) => setTimeout(resolve, attempt * 1500));
+        if (isRetryable && attempt < 2) {
+          console.warn(`Fit check ${model} attempt ${attempt} hit retryable error, retrying...`);
+          await new Promise((resolve) => setTimeout(resolve, 500));
           continue;
         }
         if (isRetryable) {
@@ -135,7 +143,7 @@ export async function POST(request: NextRequest) {
   console.error("Fit check generation failed:", lastError);
   const isRetryableError =
     lastError instanceof Error &&
-    /503|UNAVAILABLE|high demand|overloaded|rate.?limit|429|RESOURCE_EXHAUSTED/i.test(lastError.message);
+    /503|UNAVAILABLE|high demand|overloaded|rate.?limit|429|RESOURCE_EXHAUSTED|TIMEOUT/i.test(lastError.message);
   return NextResponse.json(
     {
       error: isRetryableError
