@@ -23,6 +23,26 @@ export async function createHobbyVideo(formData: FormData) {
   revalidatePath("/admin/videos");
 }
 
+export async function updateHobbyVideo(id: string, formData: FormData) {
+  await requireAdminSession();
+
+  const url = String(formData.get("url") ?? "").trim();
+  const caption = String(formData.get("caption") ?? "").trim();
+  const category = String(formData.get("category") ?? "piano").trim();
+  const aspectRatio = String(formData.get("aspectRatio") ?? "3:4").trim();
+  const duration = parseInt(String(formData.get("duration") ?? "30"), 10) || 30;
+  const sortOrder = parseInt(String(formData.get("sortOrder") ?? "0"), 10) || 0;
+
+  if (!url) return;
+
+  await prisma.hobbyVideo.update({
+    where: { id },
+    data: { url, caption, category, aspectRatio, duration, sortOrder },
+  });
+  revalidatePath("/");
+  revalidatePath("/admin/videos");
+}
+
 export async function deleteHobbyVideo(id: string) {
   await requireAdminSession();
   await prisma.hobbyVideo.delete({ where: { id } });

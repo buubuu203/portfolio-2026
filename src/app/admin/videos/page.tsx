@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { VideoUploadForm } from "./VideoUploadForm";
-import { deleteHobbyVideo } from "./actions";
+import { VideoEditCard } from "./VideoEditCard";
 import { requireAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -38,40 +38,7 @@ export default async function AdminVideosPage() {
                 </h2>
                 <ul className="flex flex-col gap-4">
                   {catVideos.map((video) => (
-                    <li
-                      key={video.id}
-                      className="flex items-start gap-4 rounded-lg border border-foreground/10 p-4"
-                    >
-                      <video
-                        src={video.url}
-                        controls
-                        preload="metadata"
-                        playsInline
-                        className="w-48 shrink-0 rounded-md"
-                      />
-                      <div className="flex flex-1 flex-col gap-2">
-                        <p className="text-sm font-medium">
-                          {video.caption || <span className="text-foreground/40">No caption</span>}
-                        </p>
-                        <p className="text-xs text-foreground/40">
-                          {video.aspectRatio} · {video.duration}s
-                        </p>
-                        <p className="break-all text-xs text-foreground/40">{video.url}</p>
-                        <form
-                          action={async () => {
-                            "use server";
-                            await deleteHobbyVideo(video.id);
-                          }}
-                        >
-                          <button
-                            type="submit"
-                            className="mt-2 text-sm text-red-500 hover:text-red-400"
-                          >
-                            Delete
-                          </button>
-                        </form>
-                      </div>
-                    </li>
+                    <VideoEditCard key={video.id} video={video} />
                   ))}
                 </ul>
               </div>
