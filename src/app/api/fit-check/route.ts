@@ -83,11 +83,11 @@ export async function POST(request: NextRequest) {
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const MODELS = ["gemini-2.0-flash", "gemini-3.5-flash-lite", "gemini-3.8-flash"] as const;
+  const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash-lite", "gemini-3.8-flash"] as const;
   let lastError: unknown;
 
   for (const model of MODELS) {
-    for (let attempt = 1; attempt <= 2; attempt++) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         const response = await ai.models.generateContent({
           model,
@@ -119,9 +119,9 @@ export async function POST(request: NextRequest) {
           err instanceof Error &&
           /503|UNAVAILABLE|high demand|overloaded|rate.?limit|429|RESOURCE_EXHAUSTED/i.test(err.message);
 
-        if (isRetryable && attempt < 2) {
+        if (isRetryable && attempt < 3) {
           console.warn(`Fit check ${model} attempt ${attempt} hit 503, retrying...`);
-          await new Promise((resolve) => setTimeout(resolve, attempt * 800));
+          await new Promise((resolve) => setTimeout(resolve, attempt * 1500));
           continue;
         }
         if (isRetryable) {
