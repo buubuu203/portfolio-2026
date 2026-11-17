@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { upload } from "@vercel/blob/client";
 import { createHobbyVideo } from "./actions";
+import { mp4Faststart } from "@/lib/mp4-faststart";
 
 export function VideoUploadForm() {
   const [uploading, setUploading] = useState(false);
@@ -34,9 +35,10 @@ export function VideoUploadForm() {
     setProgress(0);
 
     try {
+      const processed = await mp4Faststart(file);
       const blob = await upload(
         `videos/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`,
-        file,
+        processed,
         {
           access: "public",
           handleUploadUrl: "/api/upload-video",

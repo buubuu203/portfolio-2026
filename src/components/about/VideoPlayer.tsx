@@ -33,14 +33,18 @@ export function VideoPlayer({
   const [realDuration, setRealDuration] = useState(duration);
   const [volume, setVolume] = useState(0.8);
   const [muted, setMuted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const isRemote = src.startsWith("http");
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
     const onTime = () => setCurrentTime(v.currentTime);
     const onMeta = () => { if (v.duration && isFinite(v.duration)) setRealDuration(v.duration); };
-    const onPlay = () => setPlaying(true);
+    const onPlay = () => { setPlaying(true); setLoading(false); };
     const onPause = () => setPlaying(false);
+    const onWaiting = () => setLoading(true);
+    const onCanPlay = () => setLoading(false);
     const onEnded = () => {
       v.currentTime = 0;
       v.play().catch(() => {});
@@ -50,19 +54,28 @@ export function VideoPlayer({
     v.addEventListener("play", onPlay);
     v.addEventListener("pause", onPause);
     v.addEventListener("ended", onEnded);
+    v.addEventListener("waiting", onWaiting);
+    v.addEventListener("canplay", onCanPlay);
     return () => {
       v.removeEventListener("timeupdate", onTime);
       v.removeEventListener("loadedmetadata", onMeta);
       v.removeEventListener("play", onPlay);
       v.removeEventListener("pause", onPause);
       v.removeEventListener("ended", onEnded);
+      v.removeEventListener("waiting", onWaiting);
+      v.removeEventListener("canplay", onCanPlay);
     };
   }, []);
 
   const toggle = useCallback(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) v.play(); else v.pause();
+    if (v.paused) {
+      setLoading(true);
+      v.play().catch(() => setLoading(false));
+    } else {
+      v.pause();
+    }
   }, []);
 
   const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,7 +142,7 @@ export function VideoPlayer({
             ref={videoRef}
             src={src}
             poster={poster || undefined}
-            preload="metadata"
+            preload={isRemote ? "auto" : "metadata"}
             playsInline
             loop
             className="absolute inset-0 h-full w-full object-cover"
@@ -148,10 +161,14 @@ export function VideoPlayer({
         )}
 
         <div
-          className={`pbtn absolute left-1/2 top-[46%] flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/60${playing ? " opacity-0" : ""}`}
+          className={`pbtn absolute left-1/2 top-[46%] flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/60${playing && !loading ? " opacity-0" : ""}`}
           style={{ background: "rgba(255,255,255,.28)", WebkitBackdropFilter: "blur(14px)", backdropFilter: "blur(14px)", transition: "opacity .3s" }}
         >
-          {playing ? (
+          {loading ? (
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" aria-hidden className="animate-spin">
+              <path d="M12 2a10 10 0 0 1 10 10" />
+            </svg>
+          ) : playing ? (
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M8 5v14M16 5v14" />
             </svg>
