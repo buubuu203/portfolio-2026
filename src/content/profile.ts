@@ -15,7 +15,7 @@ export const identity = {
 };
 
 export const narrative = [
-  "I joined Cake by VPBank as a BA Intern on the KYC & Digital Onboarding team, translating State Bank of Vietnam regulatory constraints into specs that Compliance, Legal, Engineering, and Design could all build against.",
+  "I joined Cake by VPBank as a Product Owner Intern on the KYC & Digital Onboarding team, translating State Bank of Vietnam regulatory constraints into specs that Compliance, Legal, Engineering, and Design could all build against.",
   "That work led to a promotion to Associate Technical Product Manager, where my scope grew to owning the CTicket Platform's entire product surface - specs, Figma mockups, GA4 event tracking, and roadmap trade-offs made in real time during high-stakes on-sales.",
 ];
 
@@ -62,7 +62,7 @@ export const skills = {
     "Event tracking spec authoring",
     "AI-assisted spec drafting & prototyping",
   ],
-  tools: ["Jira", "Confluence", "Figma", "Postman", "Notion", "GA4", "GTM", "SQL", "Git", "Claude", "Copilot"],
+  tools: ["Jira", "Confluence", "Figma", "Figma AI", "Postman", "Notion", "GA4", "GTM", "SQL", "Git", "Claude", "Copilot"],
   languages: ["Vietnamese (native)", "English (IELTS 6.5)"],
 };
 
@@ -108,7 +108,7 @@ export const experience: Experience[] = [
     markImage: { src: "/images/cake-logo.png", width: 2291, height: 610, alt: "Cake by VPBank logo" },
     title: "CTicket Platform",
     period: "Mar 2025 - Present",
-    role: "Associate Technical Product Manager (promoted from BA Intern)",
+    role: "Associate Technical Product Manager (promoted from Product Owner Intern)",
     summary:
       "**Sole Product Owner** of a 7-engineer Agile squad with no BA layer - spec directly against engineering, data models, and compliance, and own every roadmap trade-off end to end.",
     partners: [
@@ -154,9 +154,9 @@ export const experience: Experience[] = [
     markImage: { src: "/images/mindx-logo.png", width: 184, height: 80, alt: "MindX Technology School logo" },
     title: "Coding & Game Dev Teacher",
     period: "Jun 2026 - Sep 2026",
-    role: "Part-time Teacher",
+    role: "Part-time Teacher (alongside the CTicket PM role)",
     summary:
-      "Taught coding and game development part-time to K-12 students at MindX Technology School in Ho Chi Minh City.",
+      "Taught coding and game development part-time to K-12 students at MindX Technology School in Ho Chi Minh City — run concurrently with the CTicket Platform role above, outside working hours.",
     highlights: [
       "Designed and delivered lessons across **Scratch**, **Python**, and **GameMaker Studio 2** for K-12 students.",
       "Provided individualized feedback to support students' **logical thinking** and problem-solving growth.",
@@ -171,7 +171,7 @@ export const experience: Experience[] = [
     markImage: { src: "/images/cake-logo.png", width: 2291, height: 610, alt: "Cake by VPBank logo" },
     title: "KYC & Digital Onboarding",
     period: "Jun 2024 - Feb 2025",
-    role: "Technical Product Owner / BA Intern",
+    role: "Product Owner Intern",
     summary:
       "Translated State Bank of Vietnam regulatory constraints into shippable specs for NFC-based identity verification.",
     highlights: [

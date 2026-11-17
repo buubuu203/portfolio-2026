@@ -58,7 +58,7 @@ export function Narrative() {
             <div className="pb-9">
               <p className="text-[13px] font-semibold uppercase tracking-[.05em] text-[var(--text-secondary)]" style={{ margin: "0 0 6px" }}>The start</p>
               <p className="max-w-2xl" style={{ margin: 0, fontSize: "clamp(16px, 2.5vw, 22px)", lineHeight: 1.4, letterSpacing: "-0.005em" }}>
-                I started as a <strong>Technical Product Owner / BA Intern</strong> on the <strong>KYC &amp; Digital Onboarding</strong> team (Jun 2024 – Feb 2025).
+                I started as a <strong>Product Owner Intern</strong> on the <strong>KYC &amp; Digital Onboarding</strong> team (Jun 2024 – Feb 2025).
               </p>
             </div>
           </div>
