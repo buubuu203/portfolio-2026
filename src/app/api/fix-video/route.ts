@@ -1,6 +1,7 @@
 "use server";
 
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
@@ -26,6 +27,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "missing id or url" }, { status: 400 });
     }
     await prisma.hobbyVideo.update({ where: { id }, data: { url } });
+    revalidatePath("/");
     return NextResponse.json({ ok: true });
   }
 
